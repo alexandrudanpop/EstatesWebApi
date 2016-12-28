@@ -1,0 +1,63 @@
+<html>
+<head>
+    <script src='swagger-client.js'></script>
+    <script>
+            var searchPost = function () {
+                var postId = document.getElementById("postId").value;
+
+                // Get data using SwaggerClient
+                window.client = new SwaggerClient({
+                    url: "http://localhost:5000/swagger/v1/swagger.json",
+                    success: function () {
+                        client.Post.ApiPostByIdGet({ id: postId }, { responseContentType: 'application/json' }, function (data) {
+                            renderPost(data.obj);
+                        });
+                    }
+                });
+            }
+
+            var renderPost = function (post) {
+                if (post == undefined) {
+                    return;
+                }
+
+                document.getElementById("postName").innerHTML = post.postName;
+                document.getElementById("postContent").innerHTML = post.content;
+            }
+
+            var editPost = function() {
+                var post = {
+                    BlogId: 0,
+                    PostName: document.getElementById("postName").innerHTML,
+                    Content: document.getElementById("postContent").value,
+                    PostId:document.getElementById("postId").value
+                }
+
+                window.client = new SwaggerClient({
+                    url: "http://localhost:5000/swagger/v1/swagger.json",
+                    success: function () {
+                        client.Post.ApiPostPut( { value: JSON.stringify(post) }, { requestContentType: "application/json" });
+                    }
+                });
+            }
+
+    </script>
+</head>
+<body>
+    <label>Post Id:</label>
+    <span>   </span>
+    <input type="text" id="postId" />
+    <button onclick="searchPost()"> Search Post</button>
+
+    <br /><br />
+    <div id="mydata">
+        <label id="postName"></label>
+        <br /><br />
+        <textarea id="postContent" rows="4" cols="50"> </textarea>
+    </div>
+
+    <br />
+    <button onclick="editPost()">Edit Post</button>
+
+</body>
+</html>

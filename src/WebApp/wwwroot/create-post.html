@@ -1,0 +1,46 @@
+<html>
+<head>
+    <script src='swagger-client.js'></script>
+    <script>
+        var savePost = function () {
+                window.client = new SwaggerClient({
+                    url: "http://localhost:5000/swagger/v1/swagger.json",
+                    success: function () {
+                        var newPost = {
+                            id: 0,
+                            postName: document.getElementById("postName").value,
+                            content: document.getElementById("postContent").value
+
+                        }
+
+                        client.Post.ApiPostPost( {value : newPost}, { responseContentType: 'application/json' }, function (data) {
+                            renderPost(data.obj);
+                        });
+                    }
+                });
+            }
+
+            var renderPost = function (post) {
+                if (post == undefined) {
+                    return;
+                }
+
+                document.getElementById("postName").innerHTML = post.postName;
+                document.getElementById("postContent").innerHTML = post.content;
+            }
+    </script>
+</head>
+<body>
+<div id="data">
+    <h2> Create a new post </h2>
+    
+    <label> Title </label>
+    <input id="postName"/> <br/><br />
+
+    <label> Content </label><br/>
+    <textarea id="postContent" rows="10" cols="100"> </textarea> <br/>
+
+    <button onclick="savePost()"> Save Post </button>
+</div>
+</body>
+</html>
