@@ -18,12 +18,6 @@
             this.repository = repository;
         }
 
-        /// <summary>
-        /// The get.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="IActionResult"/>.
-        /// </returns>
         [Route("api/estates")]
         [HttpGet]
         public IActionResult Get()
@@ -42,6 +36,35 @@
                 return this.NotFound();
             }
             catch(Exception ex)
+            {
+                return this.StatusCode(500, ex.Message);
+            }
+        }
+
+        [Route("api/estates/{name}")]
+        [HttpGet]
+        public IActionResult Get(string name = null)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return this.BadRequest("Name filter can not be empty");
+            }
+
+            try
+            {
+                var data = this.repository.GetEntities<Estate>()
+                                .Where(x => x.Title.Equals(name) || x.Title.Contains(name))
+                                .Select(x => new EstateTempDto(x.Id, x.Title, x.Price))
+                                .ToList();
+
+                if (data.Any())
+                {
+                    return this.Ok(data);
+                }
+
+                return this.NotFound();
+            }
+            catch (Exception ex)
             {
                 return this.StatusCode(500, ex.Message);
             }
