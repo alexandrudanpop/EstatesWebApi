@@ -1,6 +1,7 @@
 ﻿namespace WebApp
 {
     using DAL;
+    using DataServices;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
@@ -74,10 +75,12 @@
             this.AddServicesToContainer(services);
         }
 
+        // todo refactor to separate class
         private void AddServicesToContainer(IServiceCollection services)
         {
             services.AddDbContext<DataBaseContext>();
             services.AddTransient<IRepository, Repository>();
+            services.AddTransient<EstatesDataService>();
         }
     }
 }

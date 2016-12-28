@@ -2,20 +2,20 @@
 {
     using System;
     using Microsoft.AspNetCore.Mvc;
-    using DAL;
-    using Model;
     using System.Linq;
+    using DataServices;
+    using DTO.DTO;
 
     /// <summary>
     /// The estates controller.
     /// </summary>
     public class EstatesController : Controller
     {
-        private readonly IRepository repository;
+        private readonly EstatesDataService dataService;
 
-        public EstatesController(IRepository repository)
+        public EstatesController(EstatesDataService dataService)
         {
-            this.repository = repository;
+            this.dataService = dataService;
         }
 
         [Route("api/estates")]
@@ -24,9 +24,7 @@
         {
             try
             {
-                var data = this.repository.GetEntities<Estate>()
-                                .Select(x => new EstateTempDto(x.Id, x.Title, x.Price))
-                                .ToList();
+                var data = dataService.GetAll();
 
                 if (data.Any())
                 {
@@ -52,10 +50,7 @@
 
             try
             {
-                var data = this.repository.GetEntities<Estate>()
-                                .Where(x => x.Title.Equals(name) || x.Title.Contains(name))
-                                .Select(x => new EstateTempDto(x.Id, x.Title, x.Price))
-                                .ToList();
+                var data = dataService.GetFilteredBy(name);
 
                 if (data.Any())
                 {
@@ -76,18 +71,7 @@
         {
             try
             {
-                var newEstate = new Estate
-                {
-                    Title = estate.Name,
-                    Price = estate.Price
-                };
-
-                this.repository.Add<Estate>(newEstate);
-                this.repository.SaveChanges();
-
-                var newId = this.repository.GetEntities<Estate>()
-                            .Where(e => e.Title == newEstate.Title).FirstOrDefault()?.Id;
-
+                var newId = dataService.Create(estate);
                 return this.Ok(newId);
             }
             catch (Exception ex)
@@ -102,18 +86,10 @@
         {
             try
             {
-                var editedEstate = this.repository.GetEntities<Estate>()
-                                                  .Where(e => e.Id == estate.Id)
-                                                  .FirstOrDefault();
-                if (editedEstate == null){
-                    return this.NotFound();
-                }
-
-                editedEstate.Title = estate.Name;
-                editedEstate.Price = estate.Price;
-
-                this.repository.SaveChanges();
-                return this.Ok();
+                return dataService.Update(estate) 
+                    ? (IActionResult)this.Ok() 
+                    : (IActionResult)this.NotFound();
+                
             }
             catch(Exception ex)
             {
@@ -127,17 +103,7 @@
         {
             try
             {
-                var estateToDelete = this.repository.GetEntities<Estate>()
-                                        .Where(e => e.Id == id)
-                                        .FirstOrDefault();
-                
-                if (estateToDelete == null)
-                {
-                    return this.Ok("Data already deleted");
-                }
-
-                this.repository.Delete<Estate>(estateToDelete);
-                this.repository.SaveChanges();                       
+                dataService.Delete(id);
                 return this.Ok();
             }
             catch(Exception ex)
@@ -145,19 +111,5 @@
                 return this.StatusCode(500, ex.Message);
             }
         }
-    }
-
-    public class EstateTempDto
-    {
-        public EstateTempDto(int id, string name, int price)
-        {
-            this.Id = id;
-            this.Name = name;
-            this.Price = price;
-        }
-
-        public int Id { get; }
-        public string Name { get; }
-        public int Price { get; }
     }
 }
