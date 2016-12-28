@@ -43,7 +43,7 @@
             }
             catch(Exception ex)
             {
-                return this.Ok(ex.Message);
+                return this.StatusCode(500, ex.Message);
             }
         }
 
@@ -69,8 +69,7 @@
             }
             catch (Exception ex)
             {
-
-                return this.Ok(ex.Message);
+                return this.StatusCode(500, ex.Message);
             }
         }
 
@@ -95,7 +94,7 @@
             }
             catch(Exception ex)
             {
-                return this.Ok(ex.Message);
+                return this.StatusCode(500, ex.Message);
             }
         }
 
@@ -120,7 +119,7 @@
             }
             catch(Exception ex)
             {
-                return this.Ok(ex.Message);
+                return this.StatusCode(500, ex.Message);
             }
         }
     }
