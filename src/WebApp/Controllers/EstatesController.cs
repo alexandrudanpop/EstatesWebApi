@@ -6,15 +6,19 @@
 
     using DTO.DTO;
     using DAL.DataServices;
+    using DAL.Validators;
 
     // todo implement authorization 
     public class EstatesController : Controller
     {
         private readonly IDataService<EstateTempDto> dataService;
 
-        public EstatesController(IDataService<EstateTempDto> dataService)
+        private readonly IValidator<EstateTempDto> validator;
+
+        public EstatesController(IDataService<EstateTempDto> dataService, IValidator<EstateTempDto> validator)
         {
             this.dataService = dataService;
+            this.validator = validator;
         }
 
         [Route("api/estates")]
@@ -70,6 +74,13 @@
         {
             try
             {
+                var validationErrors = this.validator.Validate(estate);
+
+                if (validationErrors.Any())
+                {
+                    return this.BadRequest(validationErrors);
+                }
+
                 var newId = dataService.Create(estate);
                 return this.Ok(newId);
             }
@@ -85,6 +96,13 @@
         {
             try
             {
+                var validationErrors = this.validator.Validate(estate);
+
+                if (validationErrors.Any())
+                {
+                    return this.BadRequest(validationErrors);
+                }
+
                 return dataService.Update(estate) 
                     ? (IActionResult)this.Ok() 
                     : (IActionResult)this.NotFound();

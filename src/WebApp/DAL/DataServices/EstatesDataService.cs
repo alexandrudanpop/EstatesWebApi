@@ -33,7 +33,6 @@ namespace WebApp.DAL.DataServices
 
         public int? Create(EstateTempDto estate)
         {
-            // todo server side validations
             var newEstate = new Estate
             {
                 Title = estate.Name,
@@ -52,7 +51,6 @@ namespace WebApp.DAL.DataServices
 
         public bool Update(EstateTempDto estate)
         {
-            // todo server side validations
             var editedEstate = this.repository.GetEntities<Estate>()
                                   .Where(e => e.Id == estate.Id)
                                   .FirstOrDefault();

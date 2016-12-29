@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using WebApp.DAL;
 using WebApp.DAL.DataServices;
+using WebApp.DAL.Validators;
 using WebApp.Model;
 
 namespace WebApp.AppBoot
@@ -13,6 +14,7 @@ namespace WebApp.AppBoot
             services.AddDbContext<DataBaseContext>();
             services.AddTransient<IRepository, Repository>();
             services.AddTransient<IDataService<EstateTempDto>, EstatesDataService>();
+            services.AddTransient<IValidator<EstateTempDto>, EstateValidator>();
         }
     }
 }
