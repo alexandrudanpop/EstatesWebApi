@@ -1,7 +1,5 @@
-﻿namespace WebApp
+﻿namespace WebApp.AppBoot
 {
-    using DAL;
-    using DataServices;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
@@ -22,7 +20,6 @@
 
             if (env.IsEnvironment("Development"))
             {
-                // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
                 builder.AddApplicationInsightsSettings(developerMode: true);
             }
 
@@ -35,14 +32,12 @@
 
         public IConfigurationRoot Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(this.Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
             app.UseApplicationInsightsRequestTelemetry();
-
             app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseMvc();
@@ -54,14 +49,10 @@
             app.UseStaticFiles();
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
             services.AddApplicationInsightsTelemetry(this.Configuration);
-
             services.AddMvc();
-
             services.AddSwaggerGen();
 
             services.AddCors(
@@ -72,15 +63,7 @@
                 options.Filters.Add(new CorsAuthorizationFilterFactory("WebApp"));
             });
 
-            this.AddServicesToContainer(services);
-        }
-
-        // todo refactor to separate class
-        private void AddServicesToContainer(IServiceCollection services)
-        {
-            services.AddDbContext<DataBaseContext>();
-            services.AddTransient<IRepository, Repository>();
-            services.AddTransient<EstatesDataService>();
+            ContainerBuilder.AddServices(services);
         }
     }
 }

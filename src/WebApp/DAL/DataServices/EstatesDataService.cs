@@ -1,12 +1,11 @@
 ﻿using DTO.DTO;
-using WebApp.DAL;
 using WebApp.Model;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace WebApp.DataServices
+namespace WebApp.DAL.DataServices
 {
-    public class EstatesDataService
+    public class EstatesDataService : IDataService<EstateTempDto>
     {
         private readonly IRepository repository;
 
@@ -53,6 +52,7 @@ namespace WebApp.DataServices
 
         public bool Update(EstateTempDto estate)
         {
+            // todo server side validations
             var editedEstate = this.repository.GetEntities<Estate>()
                                   .Where(e => e.Id == estate.Id)
                                   .FirstOrDefault();
@@ -80,7 +80,7 @@ namespace WebApp.DataServices
                 return;
             }
 
-            this.repository.Delete<Estate>(estateToDelete);
+            this.repository.Delete(estateToDelete);
             this.repository.SaveChanges();
         }
     }

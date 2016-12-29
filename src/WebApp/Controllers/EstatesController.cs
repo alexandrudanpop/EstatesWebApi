@@ -3,17 +3,16 @@
     using System;
     using Microsoft.AspNetCore.Mvc;
     using System.Linq;
-    using DataServices;
-    using DTO.DTO;
 
-    /// <summary>
-    /// The estates controller.
-    /// </summary>
+    using DTO.DTO;
+    using DAL.DataServices;
+
+    // todo implement authorization 
     public class EstatesController : Controller
     {
-        private readonly EstatesDataService dataService;
+        private readonly IDataService<EstateTempDto> dataService;
 
-        public EstatesController(EstatesDataService dataService)
+        public EstatesController(IDataService<EstateTempDto> dataService)
         {
             this.dataService = dataService;
         }

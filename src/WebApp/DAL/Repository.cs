@@ -1,4 +1,5 @@
-namespace WebApp.DAL {
+namespace WebApp.DAL
+{
     using System.Linq;
     using Microsoft.EntityFrameworkCore;
     using Model;
