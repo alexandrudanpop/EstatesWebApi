@@ -1,22 +1,22 @@
-﻿using DTO.DTO;
-using WebApp.Model;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Collections.Generic;
+using DTO.DTO;
+using WebApp.Model;
 
 namespace WebApp.DAL.DataServices
 {
     public class EstatesDataService : IDataService<EstateTempDto>
     {
-        private readonly IRepository repository;
+        private readonly IRepository _repository;
 
         public EstatesDataService(IRepository repository)
         {
-            this.repository = repository;
+            _repository = repository;
         }
 
         public IReadOnlyList<EstateTempDto> GetAll()
         {
-            return this.repository.GetEntities<Estate>()
+            return _repository.GetEntities<Estate>()
                                 .Select(x => new EstateTempDto(x.Id, x.Title, x.Price))
                                 .ToList()
                                 .AsReadOnly();
@@ -24,7 +24,7 @@ namespace WebApp.DAL.DataServices
 
         public IReadOnlyList<EstateTempDto> GetFilteredBy(string name)
         {
-            return this.repository.GetEntities<Estate>()
+            return _repository.GetEntities<Estate>()
                                 .Where(x => x.Title.Equals(name) || x.Title.Contains(name))
                                 .Select(x => new EstateTempDto(x.Id, x.Title, x.Price))
                                 .ToList()
@@ -39,21 +39,21 @@ namespace WebApp.DAL.DataServices
                 Price = estate.Price
             };
 
-            this.repository.Add(newEstate);
-            this.repository.SaveChanges();
+            _repository.Add(newEstate);
+            _repository.SaveChanges();
 
-            var newId = this.repository.GetEntities<Estate>()
-                        .Where(e => e.Title == newEstate.Title)
-                        .FirstOrDefault()?.Id;
+            var newId = _repository
+                        .GetEntities<Estate>()
+                        .FirstOrDefault(e => e.Title == newEstate.Title)?.Id;
 
             return newId;
         }
 
         public bool Update(EstateTempDto estate)
         {
-            var editedEstate = this.repository.GetEntities<Estate>()
-                                  .Where(e => e.Id == estate.Id)
-                                  .FirstOrDefault();
+            var editedEstate = _repository
+                                  .GetEntities<Estate>()
+                                  .FirstOrDefault(e => e.Id == estate.Id);
             if (editedEstate == null)
             {
                 return false;
@@ -62,24 +62,24 @@ namespace WebApp.DAL.DataServices
             editedEstate.Title = estate.Name;
             editedEstate.Price = estate.Price;
 
-            this.repository.SaveChanges();
+            _repository.SaveChanges();
 
             return true;
         }
 
         public void Delete(int id)
         {
-            var estateToDelete = this.repository.GetEntities<Estate>()
-                        .Where(e => e.Id == id)
-                        .FirstOrDefault();
+            var estateToDelete = _repository
+                        .GetEntities<Estate>()
+                        .FirstOrDefault(e => e.Id == id);
 
             if (estateToDelete == null)
             {
                 return;
             }
 
-            this.repository.Delete(estateToDelete);
-            this.repository.SaveChanges();
+            _repository.Delete(estateToDelete);
+            _repository.SaveChanges();
         }
     }
 }

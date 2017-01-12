@@ -7,9 +7,9 @@ namespace WebApp.DAL.Validators
 {
     public class EstateValidator : IValidator<EstateTempDto>
     {
-        const string nameUniqueValidation = "name must be unique";
+        const string NameUniqueValidation = "name must be unique";
 
-        const string priceLargerThanZeroValidation = "price must be larger than 0";
+        const string PriceLargerThanZeroValidation = "price must be larger than 0";
 
         private readonly IRepository repository;
 
@@ -24,16 +24,16 @@ namespace WebApp.DAL.Validators
 
             if (dto.Id == 0 && repository.GetEntities<Estate>().Any(e => e.Title.Equals(dto.Name)))
             {
-                validations.Add(nameUniqueValidation);
+                validations.Add(NameUniqueValidation);
             }
             else if (dto.Id != 0 && repository.GetEntities<Estate>().Any(e => e.Id != dto.Id && e.Title.Equals(dto.Name)))
             {
-                validations.Add(nameUniqueValidation);
+                validations.Add(NameUniqueValidation);
             }
 
             if (dto.Price <= 0)
             {
-                validations.Add(priceLargerThanZeroValidation);
+                validations.Add(PriceLargerThanZeroValidation);
             }
 
             return validations;

@@ -2,7 +2,7 @@
 
 namespace WebApp.Model
 {
-    public class DBInitialization
+    public class DbInitializer
     {
         public static void Initialize()
         {

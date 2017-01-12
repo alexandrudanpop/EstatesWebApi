@@ -25,7 +25,7 @@
 
             builder.AddEnvironmentVariables();
 
-            DBInitialization.Initialize();
+            DbInitializer.Initialize();
 
             this.Configuration = builder.Build();
         }

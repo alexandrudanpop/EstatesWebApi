@@ -1,24 +1,23 @@
-﻿namespace WebApp.Controllers
+﻿using System;
+using System.Linq;
+using DTO.DTO;
+using Microsoft.AspNetCore.Mvc;
+using WebApp.DAL.DataServices;
+using WebApp.DAL.Validators;
+
+namespace WebApp.Controllers
 {
-    using System;
-    using Microsoft.AspNetCore.Mvc;
-    using System.Linq;
-
-    using DTO.DTO;
-    using DAL.DataServices;
-    using DAL.Validators;
-
-    // todo implement authorization 
+    // todo implement authorization
     public class EstatesController : Controller
     {
-        private readonly IDataService<EstateTempDto> dataService;
+        private readonly IDataService<EstateTempDto> _dataService;
 
-        private readonly IValidator<EstateTempDto> validator;
+        private readonly IValidator<EstateTempDto> _validator;
 
         public EstatesController(IDataService<EstateTempDto> dataService, IValidator<EstateTempDto> validator)
         {
-            this.dataService = dataService;
-            this.validator = validator;
+            _dataService = dataService;
+            _validator = validator;
         }
 
         [Route("api/estates")]
@@ -27,18 +26,18 @@
         {
             try
             {
-                var data = dataService.GetAll();
+                var data = _dataService.GetAll();
 
                 if (data.Any())
                 {
-                    return this.Ok(data);
+                    return Ok(data);
                 }
 
-                return this.NotFound();
+                return NotFound();
             }
             catch(Exception ex)
             {
-                return this.StatusCode(500, ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -48,23 +47,23 @@
         {
             if (string.IsNullOrEmpty(name))
             {
-                return this.BadRequest("Name filter can not be empty");
+                return BadRequest("Name filter can not be empty");
             }
 
             try
             {
-                var data = dataService.GetFilteredBy(name);
+                var data = _dataService.GetFilteredBy(name);
 
                 if (data.Any())
                 {
-                    return this.Ok(data);
+                    return Ok(data);
                 }
 
-                return this.NotFound();
+                return NotFound();
             }
             catch (Exception ex)
             {
-                return this.StatusCode(500, ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -74,19 +73,19 @@
         {
             try
             {
-                var validationErrors = this.validator.Validate(estate);
+                var validationErrors = _validator.Validate(estate);
 
                 if (validationErrors.Any())
                 {
-                    return this.BadRequest(validationErrors);
+                    return BadRequest(validationErrors);
                 }
 
-                var newId = dataService.Create(estate);
-                return this.Ok(newId);
+                var newId = _dataService.Create(estate);
+                return Ok(newId);
             }
             catch (Exception ex)
             {
-                return this.StatusCode(500, ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -96,21 +95,21 @@
         {
             try
             {
-                var validationErrors = this.validator.Validate(estate);
+                var validationErrors = _validator.Validate(estate);
 
                 if (validationErrors.Any())
                 {
-                    return this.BadRequest(validationErrors);
+                    return BadRequest(validationErrors);
                 }
 
-                return dataService.Update(estate) 
-                    ? (IActionResult)this.Ok() 
-                    : (IActionResult)this.NotFound();
+                return _dataService.Update(estate)
+                    ? Ok()
+                    : (IActionResult)NotFound();
                 
             }
             catch(Exception ex)
             {
-                return this.StatusCode(500, ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -120,12 +119,12 @@
         {
             try
             {
-                dataService.Delete(id);
-                return this.Ok();
+                _dataService.Delete(id);
+                return Ok();
             }
             catch(Exception ex)
             {
-                return this.StatusCode(500, ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
     }
