@@ -37,6 +37,8 @@
             loggerFactory.AddConsole(this.Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            app.UseStaticFiles();
+
             app.UseApplicationInsightsRequestTelemetry();
             app.UseApplicationInsightsExceptionTelemetry();
 
@@ -46,12 +48,15 @@
             app.UseSwaggerUi();
 
             app.UseCors("WebApp");
-            app.UseStaticFiles();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationInsightsTelemetry(this.Configuration);
+
+            services.AddMvcCore()
+                .AddJsonFormatters();
+
             services.AddMvc();
             services.AddSwaggerGen();
 
