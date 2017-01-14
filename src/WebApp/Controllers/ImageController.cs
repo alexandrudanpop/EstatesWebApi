@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.Hosting;
-using System.Threading.Tasks;
+using System;
 
 namespace WebApp.Controllers
 {
@@ -16,23 +16,36 @@ namespace WebApp.Controllers
 
         [Route("api/images")]
         [HttpPost]
-        public async Task Post()
+        public IActionResult Post()
         {
-            if (Request.Form.Files.Count != 0)
-            {
-                var file = Request.Form.Files[0];
-                long size = 0;
-                var filename = ContentDispositionHeaderValue
-                                .Parse(file.ContentDisposition)
-                                .FileName
-                                .Trim('"');
-                filename = hostingEnv.WebRootPath + $@"\{filename}";
-                size += file.Length;
-                using (var fs = System.IO.File.Create(filename))
+            try
+            {               
+                if (Request.Form.Files.Count != 0)
                 {
-                    file.CopyTo(fs);
-                    fs.Flush();
+                    var file = Request.Form.Files[0];
+                    long size = 0;
+                    var filename = ContentDispositionHeaderValue
+                                    .Parse(file.ContentDisposition)
+                                    .FileName
+                                    .Trim('"');
+                    filename = hostingEnv.WebRootPath + $@"\{filename}";
+                    size += file.Length;
+                    using (var fs = System.IO.File.Create(filename))
+                    {
+                        file.CopyTo(fs);
+                        fs.Flush();
+                    }
+
+                    return this.Ok();
                 }
+                else
+                {
+                    return this.BadRequest();
+                }
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
     }
