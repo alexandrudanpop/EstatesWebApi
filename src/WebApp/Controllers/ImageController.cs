@@ -2,8 +2,11 @@
 using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.Hosting;
 using System;
-using WebApp.DAL;
-using WebApp.Model;
+using WebApp.Validators;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
+using DTO.DTO;
+using WebApp.DAL.DataServices;
 
 namespace WebApp.Controllers
 {
@@ -11,14 +14,15 @@ namespace WebApp.Controllers
     {
         private readonly IHostingEnvironment hostingEnv;
 
-        private readonly IRepository repository;
+        private readonly IDataService<ImageDto> dataService;
 
-        const int MaxFileLengthInBytes = 500000; // 500 Kb 
+        private readonly IValidator<IFormFile> validator;
 
-        public ImageController(IHostingEnvironment hostingEnv, IRepository repository)
+        public ImageController(IHostingEnvironment hostingEnv, IDataService<ImageDto> dataService, IValidator<IFormFile> validator)
         {
             this.hostingEnv = hostingEnv;
-            this.repository = repository;
+            this.dataService = dataService;
+            this.validator = validator;
         }
 
         [Route("api/images")]
@@ -29,14 +33,12 @@ namespace WebApp.Controllers
             {
                 if (Request.Form.Files.Count != 0)
                 {
-                    // todo - validations - should filer files by file type - only img types allowed
-                    // validator - for now could only add 100 img so we don't get spammed on our server
-
                     var file = Request.Form.Files[0];
+                    var validationErrors = validator.Validate(file);
 
-                    if (file.Length > MaxFileLengthInBytes)
+                    if (validationErrors.Any())
                     {
-                        return this.BadRequest("Image must be lower than 500 Kb in size");
+                        return BadRequest(validationErrors);
                     }
 
                     var filename = ContentDispositionHeaderValue
@@ -44,31 +46,16 @@ namespace WebApp.Controllers
                         .FileName
                         .Trim('"');
 
-                    var fileExtension = System.IO.Path.GetExtension(filename);
-
                     int estateId;
                     if (!int.TryParse(file.Name, out estateId))
                     {
                         return BadRequest();
                     }
 
-                    filename = hostingEnv.WebRootPath + $@"\control-f5.com-{Guid.NewGuid().ToString()} {fileExtension}";
+                    var link = GetLink(filename);
 
-                    // todo - should resize images to a standard width? 
-                    using (var fs = System.IO.File.Create(filename))
-                    {
-                        file.CopyTo(fs);
-                        fs.Flush();
-                    }
-
-                    // insert in DB 
-                    repository.Add(new Image
-                    {
-                        EstateId = estateId,
-                        Name = file.FileName,
-                        Link = filename
-                    });
-                    repository.SaveChanges();
+                    SaveOnDisk(file, link);
+                    SaveInDb(file, estateId, link);
 
                     return Ok();
                 }
@@ -81,6 +68,26 @@ namespace WebApp.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        private void SaveInDb(IFormFile file, int estateId, string link)
+        {
+            dataService.Create(new ImageDto(0, estateId, file.FileName, link));
+        }
+
+        private static void SaveOnDisk(IFormFile file, string link)
+        {
+            using (var fs = System.IO.File.Create(link))
+            {
+                file.CopyTo(fs);
+                fs.Flush();
+            }
+        }
+
+        private string GetLink(string filename)
+        {
+            var fileExtension = System.IO.Path.GetExtension(filename);
+            return hostingEnv.WebRootPath + $@"\control-f5.com-{Guid.NewGuid().ToString()} {fileExtension}";
         }
     }
 }
