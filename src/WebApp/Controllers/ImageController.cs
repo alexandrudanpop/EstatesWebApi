@@ -52,10 +52,9 @@ namespace WebApp.Controllers
                         return BadRequest();
                     }
 
-                    var link = GetLink(filename);
-
-                    SaveOnDisk(file, link);
-                    SaveInDb(file, estateId, link);
+                    var fileIdentifier = Guid.NewGuid().ToString();
+                    SaveOnDisk(file, GetPath(filename, fileIdentifier));
+                    SaveInDb(file, estateId, GetLink(Request, filename, fileIdentifier));
 
                     return Ok();
                 }
@@ -75,19 +74,28 @@ namespace WebApp.Controllers
             dataService.Create(new ImageDto(0, estateId, file.FileName, link));
         }
 
-        private static void SaveOnDisk(IFormFile file, string link)
+        private static void SaveOnDisk(IFormFile file, string path)
         {
-            using (var fs = System.IO.File.Create(link))
+            using (var fs = System.IO.File.Create(path))
             {
                 file.CopyTo(fs);
                 fs.Flush();
             }
         }
 
-        private string GetLink(string filename)
+        private string GetPath(string filename, string fileIdentifier)
         {
             var fileExtension = System.IO.Path.GetExtension(filename);
-            return hostingEnv.WebRootPath + $@"\control-f5.com-{Guid.NewGuid().ToString()} {fileExtension}";
+            return hostingEnv.WebRootPath + $@"\control-f5.com-{fileIdentifier}{fileExtension}";
+        }
+
+        private string GetLink(HttpRequest request, string filename, string fileIdentifier)
+        {
+            var fileExtension = System.IO.Path.GetExtension(filename);
+
+            return hostingEnv.IsDevelopment() 
+                ? request.Host.Host + $@":5000\images\control-f5.com-{fileIdentifier}{fileExtension}"
+                : request.Host.Host + $@"\images\control-f5.com-{fileIdentifier}{fileExtension}";
         }
     }
 }
