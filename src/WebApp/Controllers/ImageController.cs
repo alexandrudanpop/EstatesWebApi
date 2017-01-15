@@ -22,25 +22,37 @@ namespace WebApp.Controllers
             {               
                 if (Request.Form.Files.Count != 0)
                 {
+                    // todo - validations - should filer files by file type - only img types allowed
+
                     var file = Request.Form.Files[0];
-                    long size = 0;
+
+                    int estateId;
+                    if (!int.TryParse(file.Name, out estateId))
+                    {
+                        return BadRequest();
+                    }
+
                     var filename = ContentDispositionHeaderValue
                                     .Parse(file.ContentDisposition)
                                     .FileName
                                     .Trim('"');
                     filename = hostingEnv.WebRootPath + $@"\{filename}";
-                    size += file.Length;
+
+                    // todo do we need the file size?
+                    var size = file.Length;
+
+                    // todo - should resize images to a standard width? 
                     using (var fs = System.IO.File.Create(filename))
                     {
                         file.CopyTo(fs);
                         fs.Flush();
                     }
 
-                    return this.Ok();
+                    return Ok();
                 }
                 else
                 {
-                    return this.BadRequest();
+                    return BadRequest();
                 }
             }
             catch(Exception ex)
