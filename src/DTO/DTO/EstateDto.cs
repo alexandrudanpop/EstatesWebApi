@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 
+// tbd this is the model for Estate that I want in the future, that will replace EstateTempDto
 namespace DTO.DTO
 {
     public class EstateDto
