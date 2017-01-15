@@ -3,7 +3,7 @@ using System.Linq;
 using DTO.DTO;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.DAL.DataServices;
-using WebApp.DAL.Validators;
+using WebApp.Validators;
 
 namespace WebApp.Controllers
 {

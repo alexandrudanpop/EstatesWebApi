@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace WebApp.DAL.Validators
+namespace WebApp.Validators
 {
     public interface IValidator<T> where T: class
     {

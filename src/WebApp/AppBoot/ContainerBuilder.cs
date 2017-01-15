@@ -2,8 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using WebApp.DAL;
 using WebApp.DAL.DataServices;
-using WebApp.DAL.Validators;
 using WebApp.Model;
+using WebApp.Validators;
 
 namespace WebApp.AppBoot
 {

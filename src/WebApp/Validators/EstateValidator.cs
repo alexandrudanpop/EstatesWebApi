@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using WebApp.Model;
 using System.Linq;
+using WebApp.DAL;
 
-namespace WebApp.DAL.Validators
+namespace WebApp.Validators
 {
     public class EstateValidator : IValidator<EstateTempDto>
     {
