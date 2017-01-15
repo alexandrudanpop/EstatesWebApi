@@ -15,43 +15,51 @@ namespace WebApp.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431");
 
-            modelBuilder.Entity("WebApp.Model.Blog", b =>
+            modelBuilder.Entity("WebApp.Model.Estate", b =>
                 {
-                    b.Property<int>("BlogId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Name");
+                    b.Property<int>("Area");
 
-                    b.Property<string>("Url");
+                    b.Property<int>("LocationId");
 
-                    b.HasKey("BlogId");
-
-                    b.ToTable("Blogs");
-                });
-
-            modelBuilder.Entity("WebApp.Model.Post", b =>
-                {
-                    b.Property<int>("PostId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("BlogId");
-
-                    b.Property<string>("Content");
+                    b.Property<int>("Price");
 
                     b.Property<string>("Title");
 
-                    b.HasKey("PostId");
+                    b.Property<int>("TotalSurface");
 
-                    b.HasIndex("BlogId");
+                    b.Property<int>("UsableSurface");
 
-                    b.ToTable("Posts");
+                    b.HasKey("Id");
+
+                    b.ToTable("Estates");
                 });
 
-            modelBuilder.Entity("WebApp.Model.Post", b =>
+            modelBuilder.Entity("WebApp.Model.Image", b =>
                 {
-                    b.HasOne("WebApp.Model.Blog", "Blog")
-                        .WithMany("Posts")
-                        .HasForeignKey("BlogId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("EstateId");
+
+                    b.Property<string>("Link");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EstateId");
+
+                    b.ToTable("Images");
+                });
+
+            modelBuilder.Entity("WebApp.Model.Image", b =>
+                {
+                    b.HasOne("WebApp.Model.Estate")
+                        .WithMany("Images")
+                        .HasForeignKey("EstateId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
         }

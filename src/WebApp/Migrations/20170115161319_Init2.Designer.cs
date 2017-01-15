@@ -8,8 +8,8 @@ using WebApp.Model;
 namespace WebApp.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    [Migration("20161119122939_AddEstate_Image_OwnerType")]
-    partial class AddEstate_Image_OwnerType
+    [Migration("20170115161319_Init2")]
+    partial class Init2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,13 +43,11 @@ namespace WebApp.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("EstateId");
+                    b.Property<int>("EstateId");
 
-                    b.Property<int>("OwnerId");
+                    b.Property<string>("Link");
 
-                    b.Property<int>("OwnerTypeId");
-
-                    b.Property<Guid>("Source");
+                    b.Property<string>("Name");
 
                     b.HasKey("Id");
 
@@ -58,23 +56,12 @@ namespace WebApp.Migrations
                     b.ToTable("Images");
                 });
 
-            modelBuilder.Entity("WebApp.Model.OwnerType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OwnerTypes");
-                });
-
             modelBuilder.Entity("WebApp.Model.Image", b =>
                 {
                     b.HasOne("WebApp.Model.Estate")
                         .WithMany("Images")
-                        .HasForeignKey("EstateId");
+                        .HasForeignKey("EstateId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
         }
     }

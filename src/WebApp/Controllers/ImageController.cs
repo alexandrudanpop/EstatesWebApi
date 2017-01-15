@@ -23,6 +23,7 @@ namespace WebApp.Controllers
                 if (Request.Form.Files.Count != 0)
                 {
                     // todo - validations - should filer files by file type - only img types allowed
+                    // validator - for now could only add 100 img so we don't get spammed on our server
 
                     var file = Request.Form.Files[0];
 
