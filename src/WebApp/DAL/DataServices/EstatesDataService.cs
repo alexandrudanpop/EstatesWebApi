@@ -17,7 +17,8 @@ namespace WebApp.DAL.DataServices
         public IReadOnlyList<EstateTempDto> GetAll()
         {
             return _repository.GetEntities<Estate>()
-                                .Select(x => new EstateTempDto(x.Id, x.Title, x.Price))
+                                .Select(x => 
+                                    new EstateTempDto(x.Id, x.Title, x.Price, x.Images.Select(i => new ImageDto(i.Id, i.EstateId, i.Name, i.Link)).ToList()))
                                 .ToList()
                                 .AsReadOnly();
         }
@@ -26,7 +27,8 @@ namespace WebApp.DAL.DataServices
         {
             return _repository.GetEntities<Estate>()
                                 .Where(x => x.Title.Equals(name) || x.Title.Contains(name))
-                                .Select(x => new EstateTempDto(x.Id, x.Title, x.Price))
+                                .Select(x => 
+                                    new EstateTempDto(x.Id, x.Title, x.Price, x.Images.Select(i => new ImageDto(i.Id, i.EstateId, i.Name, i.Link)).ToList()))
                                 .ToList()
                                 .AsReadOnly();
         }
@@ -77,6 +79,9 @@ namespace WebApp.DAL.DataServices
             {
                 return;
             }
+
+            var imagesToDelete = _repository.GetEntities<Image>().Where(i => i.EstateId == id).ToList();
+            imagesToDelete.ForEach(i => _repository.Delete(i));
 
             _repository.Delete(estateToDelete);
             _repository.SaveChanges();
