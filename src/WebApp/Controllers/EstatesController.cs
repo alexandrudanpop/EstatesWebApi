@@ -4,6 +4,7 @@ using DTO.DTO;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.DAL.DataServices;
 using WebApp.Validators;
+using WebApp.IO;
 
 namespace WebApp.Controllers
 {
@@ -14,10 +15,13 @@ namespace WebApp.Controllers
 
         private readonly IValidator<EstateTempDto> _validator;
 
-        public EstatesController(IDataService<EstateTempDto> dataService, IValidator<EstateTempDto> validator)
+        private readonly ImageIoService _imageIoService;
+
+        public EstatesController(IDataService<EstateTempDto> dataService, IValidator<EstateTempDto> validator, ImageIoService imageIoService)
         {
             _dataService = dataService;
             _validator = validator;
+            _imageIoService = imageIoService;
         }
 
         [Route("api/estates")]
@@ -120,6 +124,9 @@ namespace WebApp.Controllers
             try
             {
                 // todo should trigger also deleting the files from disk for that estate
+                var images = _dataService.GetById(id).Images;
+                _imageIoService.Delete(images);
+
                 _dataService.Delete(id);
                 return Ok();
             }

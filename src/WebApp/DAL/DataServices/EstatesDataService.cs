@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DTO.DTO;
 using WebApp.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.DAL.DataServices
 {
@@ -12,6 +14,20 @@ namespace WebApp.DAL.DataServices
         public EstatesDataService(IRepository repository)
         {
             _repository = repository;
+        }
+
+        public EstateTempDto GetById(int id)
+        {
+            var estate = _repository.GetEntities<Estate>()
+                .Include(e => e.Images)
+                .FirstOrDefault(e => e.Id == id);
+
+            if (estate != null)
+            {
+                return new EstateTempDto(estate.Id, estate.Title, estate.Price, estate.Images.Select(i => new ImageDto(i.Id, i.EstateId, i.Name, i.Link)).ToList());
+            }
+
+            return new EstateTempDto(0, string.Empty, 0, new List<ImageDto>());
         }
 
         public IReadOnlyList<EstateTempDto> GetAll()

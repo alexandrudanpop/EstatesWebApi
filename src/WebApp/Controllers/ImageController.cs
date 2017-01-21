@@ -51,6 +51,8 @@ namespace WebApp.Controllers
 
                     var fileIdentifier = Guid.NewGuid().ToString();
                     var link = GetLink(Request, filename, fileIdentifier);
+
+                    // todo move to ImageIoService
                     SaveOnDisk(file, GetPath(filename, fileIdentifier));
                     var imageId = SaveInDb(file, estateId, link);
 

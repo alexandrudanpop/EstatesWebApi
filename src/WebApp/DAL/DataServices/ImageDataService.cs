@@ -35,6 +35,11 @@ namespace WebApp.DAL.DataServices
             throw new NotImplementedException();
         }
 
+        public ImageDto GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public IReadOnlyList<ImageDto> GetFilteredBy(string name)
         {
             throw new NotImplementedException();

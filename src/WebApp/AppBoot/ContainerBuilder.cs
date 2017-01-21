@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using WebApp.DAL;
 using WebApp.DAL.DataServices;
+using WebApp.IO;
 using WebApp.Model;
 using WebApp.Validators;
 
@@ -20,6 +21,8 @@ namespace WebApp.AppBoot
 
             services.AddTransient<IDataService<ImageDto>, ImageDataService>();
             services.AddTransient<IValidator<IFormFile>, ImageValidator>();
+
+            services.AddTransient<ImageIoService>();
         }
     }
 }
