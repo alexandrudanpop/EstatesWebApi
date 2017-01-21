@@ -41,22 +41,20 @@ namespace WebApp.Controllers
                         return BadRequest(validationErrors);
                     }
 
+                    int estateId;
+                    GetEstateId(out estateId, file);
+
                     var filename = ContentDispositionHeaderValue
                         .Parse(file.ContentDisposition)
                         .FileName
                         .Trim('"');
 
-                    int estateId;
-                    if (!int.TryParse(file.Name, out estateId))
-                    {
-                        return BadRequest();
-                    }
-
                     var fileIdentifier = Guid.NewGuid().ToString();
+                    var link = GetLink(Request, filename, fileIdentifier);
                     SaveOnDisk(file, GetPath(filename, fileIdentifier));
-                    SaveInDb(file, estateId, GetLink(Request, filename, fileIdentifier));
+                    var imageId = SaveInDb(file, estateId, link);
 
-                    return Ok();
+                    return Ok(new {imageId, link });
                 }
                 else
                 {
@@ -69,9 +67,14 @@ namespace WebApp.Controllers
             }
         }
 
-        private void SaveInDb(IFormFile file, int estateId, string link)
+        private static bool GetEstateId(out int estateId, IFormFile file)
         {
-            dataService.Create(new ImageDto(0, estateId, file.FileName, link));
+            return int.TryParse(file.Name, out estateId);
+        }
+
+        private int? SaveInDb(IFormFile file, int estateId, string link)
+        {
+            return dataService.Create(new ImageDto(0, estateId, file.FileName, link));
         }
 
         private static void SaveOnDisk(IFormFile file, string path)

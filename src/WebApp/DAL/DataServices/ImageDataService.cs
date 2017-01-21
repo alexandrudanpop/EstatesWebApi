@@ -1,6 +1,7 @@
 ﻿using DTO.DTO;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using WebApp.Model;
 
 namespace WebApp.DAL.DataServices
@@ -20,7 +21,8 @@ namespace WebApp.DAL.DataServices
             repository.Add(image);
             repository.SaveChanges();
 
-            return 0;
+            return repository.GetEntities<Image>()
+                             .FirstOrDefault(i => i.EstateId == dto.EstateId && i.Link == dto.Link)?.Id;
         }
 
         public void Delete(int id)

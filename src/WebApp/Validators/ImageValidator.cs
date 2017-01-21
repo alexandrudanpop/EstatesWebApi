@@ -16,7 +16,12 @@ namespace WebApp.Validators
             ".png",
             ".bmp",
             ".gif",
-            ".tif"
+            ".tif",
+            ".JPG",
+            ".PNG",
+            ".BMP",
+            ".GIF",
+            ".TIF"
         };
 
         private readonly IRepository repository;
@@ -45,6 +50,12 @@ namespace WebApp.Validators
             if (repository.GetEntities<Image>().Count() > 100)
             {
                 validations.Add("Ups! Server is full of images.");
+            }
+
+            int id;
+            if (!int.TryParse(dto.Name, out id))
+            {
+                validations.Add("No estate Id provided");
             }
 
             return validations;
