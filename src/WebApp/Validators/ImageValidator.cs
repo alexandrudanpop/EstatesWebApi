@@ -9,6 +9,10 @@ namespace WebApp.Validators
     public class ImageValidator : IValidator<IFormFile>
     {
         const int MaxFileLengthInBytes = 500000; // 500 Kb 
+        const string ImageMaxSizeValidation = "Image must be lower than 500 Kb in size";
+        const string NotAnImageValidation = "Provided file is not an image";
+        const string ServerFullValidation = "Ups! Server is full of images.";
+        const string NoEstateIdValidation = "No estate Id provided";
 
         private readonly List<string> possibleImageExtensions = new List<string>
         {
@@ -37,25 +41,25 @@ namespace WebApp.Validators
 
             if (dto.Length > MaxFileLengthInBytes)
             {
-                validations.Add("Image must be lower than 500 Kb in size");
+                validations.Add(ImageMaxSizeValidation);
             }
 
             var fileExtension = System.IO.Path.GetExtension(dto.FileName.Trim());
 
             if (!possibleImageExtensions.Contains(fileExtension))
             {
-                validations.Add("Provided file is not an image");
+                validations.Add(NotAnImageValidation);
             }
 
             if (repository.GetEntities<Image>().Count() > 100)
             {
-                validations.Add("Ups! Server is full of images.");
+                validations.Add(ServerFullValidation);
             }
 
             int id;
             if (!int.TryParse(dto.Name, out id))
             {
-                validations.Add("No estate Id provided");
+                validations.Add(NoEstateIdValidation);
             }
 
             return validations;
