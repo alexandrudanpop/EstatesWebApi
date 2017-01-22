@@ -9,7 +9,9 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Net.Http.Headers;
     using Model;
+    using System;
     using System.IO;
 
     public class Startup
@@ -84,7 +86,15 @@
             {
                 FileProvider = new PhysicalFileProvider(
                         Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
-                RequestPath = new PathString("/images")
+                RequestPath = new PathString("/images"),
+                OnPrepareResponse = (context) =>
+                {
+                    var headers = context.Context.Response.GetTypedHeaders();
+                    headers.CacheControl = new CacheControlHeaderValue()
+                    {
+                        MaxAge = TimeSpan.FromDays(7),
+                    };
+                }
             });
 
             app.UseDirectoryBrowser(new DirectoryBrowserOptions()
