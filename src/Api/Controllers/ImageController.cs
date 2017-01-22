@@ -56,7 +56,7 @@ namespace Api.Controllers
                     var link = imageIoService.CreateServerLink(Request, filename, fileIdentifier);
                     var imageId = SaveInDb(file, estateId, link);
 
-                    return Ok(new {imageId, link });
+                    return Ok(new ImageDto(imageId, estateId, string.Empty, link));
                 }
                 else
                 {
@@ -74,9 +74,16 @@ namespace Api.Controllers
             return int.TryParse(file.Name, out estateId);
         }
 
-        private int? SaveInDb(IFormFile file, int estateId, string link)
+        private int SaveInDb(IFormFile file, int estateId, string link)
         {
-            return dataService.Create(new ImageDto(0, estateId, file.FileName, link));
+            var imageId =  dataService.Create(new ImageDto(0, estateId, file.FileName, link));
+
+            if (!imageId.HasValue)
+            {
+                throw new Exception("Could not save iamge in DB");
+            }
+
+            return imageId.Value;
         }
     }
 }
