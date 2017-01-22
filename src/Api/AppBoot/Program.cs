@@ -1,4 +1,4 @@
-﻿namespace WebApp.AppBoot
+﻿namespace Api.AppBoot
 {
     using System.IO;
 

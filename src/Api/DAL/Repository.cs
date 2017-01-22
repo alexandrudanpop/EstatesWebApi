@@ -1,8 +1,8 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using WebApp.Model;
+using Api.Model;
 
-namespace WebApp.DAL
+namespace Api.DAL
 {
     public class Repository : IRepository
     {

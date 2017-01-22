@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using DTO.DTO;
-using WebApp.Model;
 using Microsoft.EntityFrameworkCore;
+using Api.Model;
 
-namespace WebApp.DAL.DataServices
+namespace Api.DAL.DataServices
 {
     public class EstatesDataService : IDataService<EstateTempDto>
     {

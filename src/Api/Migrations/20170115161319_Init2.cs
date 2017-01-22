@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace WebApp.Migrations
+namespace Api.Migrations
 {
     public partial class Init2 : Migration
     {

@@ -2,11 +2,11 @@
 using System.Linq;
 using DTO.DTO;
 using Microsoft.AspNetCore.Mvc;
-using WebApp.DAL.DataServices;
-using WebApp.Validators;
-using WebApp.IO;
+using Api.DAL.DataServices;
+using Api.Validators;
+using Api.IO;
 
-namespace WebApp.Controllers
+namespace Api.Controllers
 {
     // todo implement authorization
     public class EstatesController : Controller

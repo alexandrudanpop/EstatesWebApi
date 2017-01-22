@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace WebApp.DAL.DataServices
+namespace Api.DAL.DataServices
 {
     public interface IDataService<T> where T: class
     {

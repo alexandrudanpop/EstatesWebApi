@@ -1,4 +1,4 @@
-﻿namespace WebApp.Model
+﻿namespace Api.Model
 {
     using Microsoft.EntityFrameworkCore;
 

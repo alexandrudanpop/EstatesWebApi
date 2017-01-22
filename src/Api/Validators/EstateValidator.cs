@@ -1,10 +1,10 @@
-﻿using DTO.DTO;
+﻿using Api.DAL;
+using Api.Model;
+using DTO.DTO;
 using System.Collections.Generic;
-using WebApp.Model;
 using System.Linq;
-using WebApp.DAL;
 
-namespace WebApp.Validators
+namespace Api.Validators
 {
     public class EstateValidator : IValidator<EstateTempDto>
     {

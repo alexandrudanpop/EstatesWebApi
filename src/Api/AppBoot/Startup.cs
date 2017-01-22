@@ -1,4 +1,4 @@
-﻿namespace WebApp.AppBoot
+﻿namespace Api.AppBoot
 {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;

@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
-using Microsoft.AspNetCore.Hosting;
 using System;
-using WebApp.Validators;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
-using DTO.DTO;
-using WebApp.DAL.DataServices;
-using WebApp.IO;
 
-namespace WebApp.Controllers
+using DTO.DTO;
+using Api.DAL.DataServices;
+using Api.Validators;
+using Api.IO;
+
+namespace Api.Controllers
 {
     public class ImageController : Controller
     {

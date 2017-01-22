@@ -1,13 +1,13 @@
-﻿using DTO.DTO;
+﻿using Api.DAL;
+using Api.DAL.DataServices;
+using Api.IO;
+using Api.Model;
+using Api.Validators;
+using DTO.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using WebApp.DAL;
-using WebApp.DAL.DataServices;
-using WebApp.IO;
-using WebApp.Model;
-using WebApp.Validators;
 
-namespace WebApp.AppBoot
+namespace Api.AppBoot
 {
     public static class ContainerBuilder
     {

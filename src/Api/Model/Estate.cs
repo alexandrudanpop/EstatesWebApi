@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace WebApp.Model
+namespace Api.Model
 {
     public class Estate
     {

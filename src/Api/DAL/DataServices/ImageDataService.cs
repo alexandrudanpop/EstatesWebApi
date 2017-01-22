@@ -1,10 +1,10 @@
-﻿using DTO.DTO;
+﻿using Api.Model;
+using DTO.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using WebApp.Model;
 
-namespace WebApp.DAL.DataServices
+namespace Api.DAL.DataServices
 {
     public class ImageDataService : IDataService<ImageDto>
     {

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
-using WebApp.DAL;
-using WebApp.Model;
 using System.Linq;
+using Api.DAL;
+using Api.Model;
 
-namespace WebApp.Validators
+namespace Api.Validators
 {
     public class ImageValidator : IValidator<IFormFile>
     {

@@ -1,4 +1,4 @@
-namespace WebApp.DAL
+namespace Api.DAL
 {
     using System;
     using System.Linq;

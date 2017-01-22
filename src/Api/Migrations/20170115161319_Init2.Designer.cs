@@ -1,16 +1,16 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using WebApp.Model;
+using Api.Model;
 
-namespace WebApp.Migrations
+namespace Api.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20170115161319_Init2")]
+    partial class Init2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431");
