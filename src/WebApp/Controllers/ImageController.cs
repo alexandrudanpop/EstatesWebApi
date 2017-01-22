@@ -7,22 +7,23 @@ using Microsoft.AspNetCore.Http;
 using System.Linq;
 using DTO.DTO;
 using WebApp.DAL.DataServices;
+using WebApp.IO;
 
 namespace WebApp.Controllers
 {
     public class ImageController : Controller
     {
-        private readonly IHostingEnvironment hostingEnv;
-
         private readonly IDataService<ImageDto> dataService;
 
         private readonly IValidator<IFormFile> validator;
 
-        public ImageController(IHostingEnvironment hostingEnv, IDataService<ImageDto> dataService, IValidator<IFormFile> validator)
+        private readonly ImageIoService imageIoService;
+
+        public ImageController(IDataService<ImageDto> dataService, IValidator<IFormFile> validator, ImageIoService imageIoService)
         {
-            this.hostingEnv = hostingEnv;
             this.dataService = dataService;
             this.validator = validator;
+            this.imageIoService = imageIoService;
         }
 
         [Route("api/images")]
@@ -50,10 +51,9 @@ namespace WebApp.Controllers
                         .Trim('"');
 
                     var fileIdentifier = Guid.NewGuid().ToString();
-                    var link = GetLink(Request, filename, fileIdentifier);
+                    imageIoService.SaveOnDisk(file, filename, fileIdentifier);
 
-                    // todo move to ImageIoService
-                    SaveOnDisk(file, GetPath(filename, fileIdentifier));
+                    var link = imageIoService.CreateServerLink(Request, filename, fileIdentifier);
                     var imageId = SaveInDb(file, estateId, link);
 
                     return Ok(new {imageId, link });
@@ -77,30 +77,6 @@ namespace WebApp.Controllers
         private int? SaveInDb(IFormFile file, int estateId, string link)
         {
             return dataService.Create(new ImageDto(0, estateId, file.FileName, link));
-        }
-
-        private static void SaveOnDisk(IFormFile file, string path)
-        {
-            using (var fs = System.IO.File.Create(path))
-            {
-                file.CopyTo(fs);
-                fs.Flush();
-            }
-        }
-
-        private string GetPath(string filename, string fileIdentifier)
-        {
-            var fileExtension = System.IO.Path.GetExtension(filename);
-            return hostingEnv.WebRootPath + $@"\control-f5.com-{fileIdentifier}{fileExtension}";
-        }
-
-        private string GetLink(HttpRequest request, string filename, string fileIdentifier)
-        {
-            var fileExtension = System.IO.Path.GetExtension(filename);
-
-            return hostingEnv.IsDevelopment() 
-                ? request.Host.Host + $@":5000\images\control-f5.com-{fileIdentifier}{fileExtension}"
-                : request.Host.Host + $@"\images\control-f5.com-{fileIdentifier}{fileExtension}";
         }
     }
 }

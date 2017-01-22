@@ -123,9 +123,8 @@ namespace WebApp.Controllers
         {
             try
             {
-                // todo should trigger also deleting the files from disk for that estate
                 var images = _dataService.GetById(id).Images;
-                _imageIoService.Delete(images);
+                _imageIoService.DeleteFromDisk(images);
 
                 _dataService.Delete(id);
                 return Ok();
