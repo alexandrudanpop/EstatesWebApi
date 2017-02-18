@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
-using Api.DAL;
 using Api.Model;
+using MongoDB.Driver;
 
 namespace Api.Validators
 {
@@ -28,11 +28,11 @@ namespace Api.Validators
             ".TIF"
         };
 
-        private readonly IRepository repository;
+        private readonly MongoDbContext<Image> db;
 
-        public ImageValidator(IRepository repository)
+        public ImageValidator(MongoDbContext<Image> db)
         {
-            this.repository = repository;
+            this.db = db;
         }
 
         public IReadOnlyList<string> Validate(IFormFile dto)
@@ -51,7 +51,7 @@ namespace Api.Validators
                 validations.Add(NotAnImageValidation);
             }
 
-            if (repository.GetEntities<Image>().Count() > 100)
+            if (db.Collection.AsQueryable().Count() > 100)
             {
                 validations.Add(ServerFullValidation);
             }

@@ -30,8 +30,6 @@
 
             builder.AddEnvironmentVariables();
 
-            DbInitializer.Initialize();
-
             this.Configuration = builder.Build();
         }
 

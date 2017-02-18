@@ -1,6 +1,7 @@
 ﻿using Api.DAL;
 using Api.Model;
 using DTO.DTO;
+using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,22 +13,22 @@ namespace Api.Validators
 
         const string PriceLargerThanZeroValidation = "price must be larger than 0";
 
-        private readonly IRepository repository;
+        private readonly MongoDbContext<Estate> db;
 
-        public EstateValidator(IRepository repository)
+        public EstateValidator(MongoDbContext<Estate> db)
         {
-            this.repository = repository;
+            this.db = db;
         }
 
         public IReadOnlyList<string> Validate(EstateTempDto dto)
         {
             var validations = new List<string>();
 
-            if (dto.Id == 0 && repository.GetEntities<Estate>().Any(e => e.Title.Equals(dto.Name)))
+            if (dto.Id == 0 && db.Collection.AsQueryable().Any(e => e.Title.Equals(dto.Name)))
             {
                 validations.Add(NameUniqueValidation);
             }
-            else if (dto.Id != 0 && repository.GetEntities<Estate>().Any(e => e.Id != dto.Id && e.Title.Equals(dto.Name)))
+            else if (dto.Id != 0 && db.Collection.AsQueryable().Any(e => e.Id != dto.Id && e.Title.Equals(dto.Name)))
             {
                 validations.Add(NameUniqueValidation);
             }

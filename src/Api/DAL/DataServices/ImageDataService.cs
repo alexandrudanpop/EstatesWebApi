@@ -1,5 +1,6 @@
 ﻿using Api.Model;
 using DTO.DTO;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,20 +9,19 @@ namespace Api.DAL.DataServices
 {
     public class ImageDataService : IDataService<ImageDto>
     {
-        private readonly IRepository repository;
+        private readonly MongoDbContext<Image> db;
 
-        public ImageDataService(IRepository repository)
+        public ImageDataService(MongoDbContext<Image> db)
         {
-            this.repository = repository;
+            this.db = db;
         }
 
         public int? Create(ImageDto dto)
         {
             var image = new Image { EstateId = dto.EstateId, Name = dto.Name, Link = dto.Link };
-            repository.Add(image);
-            repository.SaveChanges();
+            db.Collection.InsertOne(image);
 
-            return repository.GetEntities<Image>()
+            return db.Collection.AsQueryable()
                              .FirstOrDefault(i => i.EstateId == dto.EstateId && i.Link == dto.Link)?.Id;
         }
 

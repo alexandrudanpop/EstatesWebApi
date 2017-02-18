@@ -1,25 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using DTO.DTO;
-using Microsoft.EntityFrameworkCore;
 using Api.Model;
+using MongoDB.Driver;
+using MongoDB.Bson;
 
 namespace Api.DAL.DataServices
 {
     public class EstatesDataService : IDataService<EstateTempDto>
     {
-        private readonly IRepository _repository;
+        private readonly MongoDbContext<Estate> db;
 
-        public EstatesDataService(IRepository repository)
+        public EstatesDataService(MongoDbContext<Estate> db)
         {
-            _repository = repository;
+            this.db = db;
         }
 
         public EstateTempDto GetById(int id)
         {
-            var estate = _repository.GetEntities<Estate>()
-                .Include(e => e.Images)
+            var estate = db.Collection.AsQueryable()
                 .FirstOrDefault(e => e.Id == id);
+                //.Include(e => e.Images)
 
             if (estate != null)
             {
@@ -31,7 +32,7 @@ namespace Api.DAL.DataServices
 
         public IReadOnlyList<EstateTempDto> GetAll()
         {
-            return _repository.GetEntities<Estate>()
+            return db.Collection.Find(e => true).ToList()
                                 .Select(x => 
                                     new EstateTempDto(x.Id, x.Title, x.Price, x.Images.Select(i => new ImageDto(i.Id, i.EstateId, i.Name, i.Link)).ToList()))
                                 .ToList()
@@ -40,8 +41,7 @@ namespace Api.DAL.DataServices
 
         public IReadOnlyList<EstateTempDto> GetFilteredBy(string name)
         {
-            return _repository.GetEntities<Estate>()
-                                .Where(x => x.Title.Equals(name) || x.Title.Contains(name))
+            return db.Collection.Find(x => x.Title.Equals(name) || x.Title.Contains(name)).ToList()
                                 .Select(x => 
                                     new EstateTempDto(x.Id, x.Title, x.Price, x.Images.Select(i => new ImageDto(i.Id, i.EstateId, i.Name, i.Link)).ToList()))
                                 .ToList()
@@ -56,50 +56,64 @@ namespace Api.DAL.DataServices
                 Price = estate.Price
             };
 
-            _repository.Add(newEstate);
-            _repository.SaveChanges();
+            db.Collection.InsertOne(newEstate);
 
-            var newId = _repository
-                        .GetEntities<Estate>()
-                        .FirstOrDefault(e => e.Title == newEstate.Title)?.Id;
+            var newId = db.Collection
+                        .Find(e => e.Title == newEstate.Title)
+                        .FirstOrDefault()?.Id;
 
             return newId;
         }
 
         public bool Update(EstateTempDto estate)
         {
-            var editedEstate = _repository
-                                  .GetEntities<Estate>()
-                                  .FirstOrDefault(e => e.Id == estate.Id);
-            if (editedEstate == null)
+            var estateToUpdate = new Estate
             {
-                return false;
-            }
+                Id = estate.Id,
+                Title = estate.Name,
+                Price = estate.Price,
+                Images = estate.Images.Select(x => new Image
+                {
+                    Id = x.Id,
+                    EstateId = x.EstateId,
+                    Link = x.Link,
+                    Name = x.Name
+                }).ToList()
+            };
 
-            editedEstate.Title = estate.Name;
-            editedEstate.Price = estate.Price;
+            var result = db.Collection.ReplaceOne(null, estateToUpdate);
 
-            _repository.SaveChanges();
+            //if (editedEstate == null)
+            //{
+            //    return false;
+            //}
+
+            //editedEstate.Title = estate.Name;
+            //editedEstate.Price = estate.Price;
+
+            //_repository.SaveChanges();
 
             return true;
         }
 
         public void Delete(int id)
         {
-            var estateToDelete = _repository
-                        .GetEntities<Estate>()
-                        .FirstOrDefault(e => e.Id == id);
+            //var estateToDelete = _repository
+            //            .GetEntities<Estate>()
+            //            .FirstOrDefault(e => e.Id == id);
 
-            if (estateToDelete == null)
-            {
-                return;
-            }
+            //if (estateToDelete == null)
+            //{
+            //    return;
+            //}
 
-            var imagesToDelete = _repository.GetEntities<Image>().Where(i => i.EstateId == id).ToList();
-            imagesToDelete.ForEach(i => _repository.Delete(i));
+            //var imagesToDelete = _repository.GetEntities<Image>().Where(i => i.EstateId == id).ToList();
+            //imagesToDelete.ForEach(i => _repository.Delete(i));
 
-            _repository.Delete(estateToDelete);
-            _repository.SaveChanges();
+            //_repository.Delete(estateToDelete);
+            //_repository.SaveChanges();
+            var filter = Builders<Estate>.Filter.Eq("id", id);
+            db.Collection.DeleteOne(filter);
         }
     }
 }

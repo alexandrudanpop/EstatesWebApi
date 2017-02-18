@@ -9,5 +9,10 @@ namespace Api.Model
         public string Name { get; set; }
 
         public string Link { get; set; }
+
+        public override string ToString()
+        {
+            return nameof(Image);
+        }
     }
 }

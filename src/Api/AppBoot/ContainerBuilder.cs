@@ -1,5 +1,4 @@
-﻿using Api.DAL;
-using Api.DAL.DataServices;
+﻿using Api.DAL.DataServices;
 using Api.IO;
 using Api.Model;
 using Api.Validators;
@@ -13,8 +12,8 @@ namespace Api.AppBoot
     {
         public static void AddServices(IServiceCollection services)
         {
-            services.AddDbContext<DataBaseContext>();
-            services.AddTransient<IRepository, Repository>();
+            services.AddTransient<MongoDbContext<Estate>>();
+            services.AddTransient<MongoDbContext<Image>>();
 
             services.AddTransient<IDataService<EstateTempDto>, EstatesDataService>();
             services.AddTransient<IValidator<EstateTempDto>, EstateValidator>();

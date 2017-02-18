@@ -14,5 +14,10 @@ namespace Api.Model
 			public int TotalSurface { get; set; }
 			public int LocationId { get; set; }
 			public List<Image> Images { get; set; }
+
+        public override string ToString()
+        {
+            return nameof(Estate);
+        }
     }
 }
