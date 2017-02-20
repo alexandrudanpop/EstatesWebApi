@@ -37,10 +37,7 @@ namespace Api.DAL.DataServices
         public IReadOnlyList<EstateTempDto> GetAll()
         {
             var estates = estatesDbCollection.Collection.Find(new BsonDocument()).Limit(50).ToList();
-            var estateIds = estates.Select(e => e.Id).ToArray();
-
-            var filter = Builders<Image>.Filter.Where(i => estateIds.Contains(i.EstateId));
-            var images = imageDbCollection.Collection.Find(filter).ToList();
+            var images = GetEstatesImages(estates);
 
             estates.ForEach(e => e.Images.AddRange(images.Where(i => i.EstateId == e.Id)));
 
@@ -58,10 +55,7 @@ namespace Api.DAL.DataServices
         public IReadOnlyList<EstateTempDto> GetFilteredBy(string name)
         {
             var estates = estatesDbCollection.Collection.Find(x => x.Title.Equals(name) || x.Title.Contains(name)).ToList();
-
-            var images = imageDbCollection.Collection.AsQueryable()
-                .Where(i => estates.Select(e => e.Id).ToArray().Contains(i.EstateId))
-                .ToList();
+            var images = GetEstatesImages(estates);
 
             estates.ForEach(e => e.Images.AddRange(images.Where(i => i.EstateId == e.Id)));
 
@@ -115,8 +109,20 @@ namespace Api.DAL.DataServices
 
         public void Delete(string id)
         {
-            var filter = Builders<Estate>.Filter.Eq("_id", id);
-            estatesDbCollection.Collection.DeleteOne(filter);
+            var estateFilter = Builders<Estate>.Filter.Eq("_id", id);
+            estatesDbCollection.Collection.DeleteOne(estateFilter);
+
+            var imageFilter = Builders<Image>.Filter.Eq("EstateId", id);
+            imageDbCollection.Collection.DeleteMany(imageFilter); 
+        }
+
+        private List<Image> GetEstatesImages(List<Estate> estates)
+        {
+            var estateIds = estates.Select(e => e.Id).ToArray();
+
+            var filter = Builders<Image>.Filter.Where(i => estateIds.Contains(i.EstateId));
+            var images = imageDbCollection.Collection.Find(filter).ToList();
+            return images;
         }
     }
 }
