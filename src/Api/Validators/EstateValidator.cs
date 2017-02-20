@@ -1,5 +1,4 @@
-﻿using Api.DAL;
-using Api.Model;
+﻿using Api.Model;
 using DTO.DTO;
 using MongoDB.Driver;
 using System.Collections.Generic;
@@ -24,11 +23,11 @@ namespace Api.Validators
         {
             var validations = new List<string>();
 
-            if (dto.Id == 0 && db.Collection.AsQueryable().Any(e => e.Title.Equals(dto.Name)))
+            if (dto.Id == string.Empty && db.Collection.AsQueryable().Any(e => e.Title.Equals(dto.Name)))
             {
                 validations.Add(NameUniqueValidation);
             }
-            else if (dto.Id != 0 && db.Collection.AsQueryable().Any(e => e.Id != dto.Id && e.Title.Equals(dto.Name)))
+            else if (dto.Id != string.Empty && db.Collection.AsQueryable().Any(e => e.Id != dto.Id && e.Title.Equals(dto.Name)))
             {
                 validations.Add(NameUniqueValidation);
             }

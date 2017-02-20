@@ -56,8 +56,7 @@ namespace Api.Validators
                 validations.Add(ServerFullValidation);
             }
 
-            int id;
-            if (!int.TryParse(dto.Name, out id))
+            if (string.IsNullOrEmpty(dto.Name))
             {
                 validations.Add(NoEstateIdValidation);
             }

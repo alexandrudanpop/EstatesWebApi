@@ -119,7 +119,7 @@ namespace Api.Controllers
 
         [Route("api/estates/{id}")]
         [HttpDelete]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string id)
         {
             try
             {

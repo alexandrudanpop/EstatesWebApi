@@ -1,13 +1,18 @@
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace Api.Model
 {
     public class Image
     {
-        public int Id { get; set; }
+        [BsonId]
+        public string Id { get; set; }
 
-        public int EstateId { get; set; }
+        [BsonRequired]
+        public string EstateId { get; set; }
 
         public string Name { get; set; }
 
+        [BsonRequired]
         public string Link { get; set; }
 
         public override string ToString()

@@ -42,8 +42,7 @@ namespace Api.Controllers
                         return BadRequest(validationErrors);
                     }
 
-                    int estateId;
-                    GetEstateId(out estateId, file);
+                    string estateId = file.Name;
 
                     var filename = ContentDispositionHeaderValue
                         .Parse(file.ContentDisposition)
@@ -69,21 +68,16 @@ namespace Api.Controllers
             }
         }
 
-        private static bool GetEstateId(out int estateId, IFormFile file)
+        private string SaveInDb(IFormFile file, string estateId, string link)
         {
-            return int.TryParse(file.Name, out estateId);
-        }
+            var imageId =  dataService.Create(new ImageDto(string.Empty, estateId, file.FileName, link));
 
-        private int SaveInDb(IFormFile file, int estateId, string link)
-        {
-            var imageId =  dataService.Create(new ImageDto(0, estateId, file.FileName, link));
-
-            if (!imageId.HasValue)
+            if (string.IsNullOrEmpty(imageId))
             {
                 throw new Exception("Could not save iamge in DB");
             }
 
-            return imageId.Value;
+            return imageId;
         }
     }
 }

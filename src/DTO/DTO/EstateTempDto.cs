@@ -4,7 +4,7 @@ namespace DTO.DTO
 {
     public class EstateTempDto
     {
-        public EstateTempDto(int id, string name, int price, IList<ImageDto> images)
+        public EstateTempDto(string id, string name, int price, IList<ImageDto> images)
         {
             this.Id = id;
             this.Name = name;
@@ -12,7 +12,7 @@ namespace DTO.DTO
             this.Images = images;
         }
 
-        public int Id { get; }
+        public string Id { get; }
 
         public string Name { get; }
 

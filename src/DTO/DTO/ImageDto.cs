@@ -2,7 +2,7 @@ namespace DTO.DTO
 {
     public class ImageDto
     {
-        public ImageDto(int id, int estateId, string name, string link)
+        public ImageDto(string id, string estateId, string name, string link)
         {
             Id = id;
             EstateId = estateId;
@@ -10,9 +10,9 @@ namespace DTO.DTO
             Link = link;
         }
 
-        public int Id { get; }
+        public string Id { get; }
 
-        public int EstateId { get; }
+        public string EstateId { get; }
 
         public string Name { get; }
 

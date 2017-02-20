@@ -1,5 +1,6 @@
 ﻿using Api.Model;
 using DTO.DTO;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -16,16 +17,16 @@ namespace Api.DAL.DataServices
             this.db = db;
         }
 
-        public int? Create(ImageDto dto)
+        public string Create(ImageDto dto)
         {
-            var image = new Image { EstateId = dto.EstateId, Name = dto.Name, Link = dto.Link };
+            var image = new Image { Id = ObjectId.GenerateNewId().ToString(), EstateId = dto.EstateId, Name = dto.Name, Link = dto.Link };
             db.Collection.InsertOne(image);
 
             return db.Collection.AsQueryable()
                              .FirstOrDefault(i => i.EstateId == dto.EstateId && i.Link == dto.Link)?.Id;
         }
 
-        public void Delete(int id)
+        public void Delete(string id)
         {
             throw new NotImplementedException();
         }
@@ -35,7 +36,7 @@ namespace Api.DAL.DataServices
             throw new NotImplementedException();
         }
 
-        public ImageDto GetById(int id)
+        public ImageDto GetById(string id)
         {
             throw new NotImplementedException();
         }
