@@ -115,21 +115,7 @@ namespace Api.DAL.DataServices
 
         public void Delete(string id)
         {
-            //var estateToDelete = _repository
-            //            .GetEntities<Estate>()
-            //            .FirstOrDefault(e => e.Id == id);
-
-            //if (estateToDelete == null)
-            //{
-            //    return;
-            //}
-
-            //var imagesToDelete = _repository.GetEntities<Image>().Where(i => i.EstateId == id).ToList();
-            //imagesToDelete.ForEach(i => _repository.Delete(i));
-
-            //_repository.Delete(estateToDelete);
-            //_repository.SaveChanges();
-            var filter = Builders<Estate>.Filter.Eq("id", id);
+            var filter = Builders<Estate>.Filter.Eq("_id", id);
             estatesDbCollection.Collection.DeleteOne(filter);
         }
     }
