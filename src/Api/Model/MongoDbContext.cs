@@ -1,28 +1,26 @@
 ﻿namespace Api.Model
 {
+    using AppBoot;
+    using Microsoft.Extensions.Options;
     using MongoDB.Driver;
     using System;
 
     public class MongoDbContext<T> where T : class
     {
-        private const string DbName = "Estates";
-
-        // todo - should be configurable
-        private const string DbUrl = @"mongodb://localhost:27017";
-
         public IMongoCollection<T> Collection { get; private set;  }
 
-        public MongoDbContext()
+        public MongoDbContext(IOptions<AppConfig> config)
         {
-            var mongoClient = new MongoClient(DbUrl);
-            var db = mongoClient.GetDatabase(DbName);
+            string connectionString = config.Value.ConnectionString;
+            MongoClient mongoClient = new MongoClient(connectionString);
+            var db = mongoClient.GetDatabase("estates");
 
             InitCollection(db);
         }
 
         private void InitCollection(IMongoDatabase db)
         {
-            var collectionName = Activator.CreateInstance(typeof(T)).ToString();
+            var collectionName = Activator.CreateInstance(typeof(T)).ToString().ToLower();
             Collection = db.GetCollection<T>(collectionName);
         }
     }

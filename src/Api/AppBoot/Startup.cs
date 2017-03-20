@@ -73,6 +73,9 @@
                 options.Filters.Add(new CorsAuthorizationFilterFactory("WebApp"));
             });
 
+            services.AddOptions();
+            services.Configure<AppConfig>(Configuration);
+
             ContainerBuilder.AddServices(services);
         }
 
