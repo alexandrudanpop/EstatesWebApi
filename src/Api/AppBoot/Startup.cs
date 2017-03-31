@@ -86,8 +86,8 @@
             app.UseStaticFiles(new StaticFileOptions()
             {
                 FileProvider = new PhysicalFileProvider(
-                        Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
-                RequestPath = new PathString("/images"),
+                        Path.Combine(Directory.GetCurrentDirectory(), "img")),
+                RequestPath = new PathString("/img"),
                 OnPrepareResponse = (context) =>
                 {
                     var headers = context.Context.Response.GetTypedHeaders();
@@ -101,8 +101,8 @@
             app.UseDirectoryBrowser(new DirectoryBrowserOptions()
             {
                 FileProvider = new PhysicalFileProvider(
-                    Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
-                RequestPath = new PathString("/images")
+                   Path.Combine(Directory.GetCurrentDirectory(), "img")),
+                RequestPath = new PathString("/img")
             });
         }
     }
