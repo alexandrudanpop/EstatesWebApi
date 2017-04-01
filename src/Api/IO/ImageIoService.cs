@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
 
     using DTO.DTO;
 
@@ -23,24 +22,20 @@
         {
             var fileExtension = Path.GetExtension(fileName);
 
-            // return this.hostingEnv.IsDevelopment()
-            // ? request.Host.Host + $@":5000\images\control-f5.com-{fileIdentifier}{fileExtension}"
-            // :
-            return request.Host.Host + $@"/img/control-f5.com-{fileIdentifier}{fileExtension}";
+            return this.hostingEnv.IsDevelopment()
+            ? request.Host.Host + $@":5000/img/control-f5.com-{fileIdentifier}{fileExtension}"
+            : request.Host.Host + $@"/img/control-f5.com-{fileIdentifier}{fileExtension}";
         }
 
         public void DeleteFromDisk(IList<ImageDto> images)
         {
-            var root = this.hostingEnv.WebRootPath;
-            if (images.Any())
+            var imageFolder = Path.Combine(Directory.GetCurrentDirectory(), "img");
+            foreach (var image in images)
             {
-                foreach (var image in images)
-                {
-                    var index = image.Link.IndexOf("/img/control-f5.com", StringComparison.OrdinalIgnoreCase);
-                    var imagePath = $@"{root}/{image.Link.Substring(index)}";
+                var index = image.Link.IndexOf("control-f5.com", StringComparison.OrdinalIgnoreCase);
+                var imagePath = $@"{imageFolder}/{image.Link.Substring(index)}";
 
-                    File.Delete(imagePath);
-                }
+                File.Delete(imagePath);
             }
         }
 
