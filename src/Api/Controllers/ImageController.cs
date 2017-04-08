@@ -3,9 +3,7 @@
     using System;
     using System.Linq;
 
-    using Api.DAL.DataServices;
     using Api.IO;
-    using Api.Validators;
 
     using Core.Contracts;
     using Core.Contracts.DataService;
@@ -40,30 +38,30 @@
         {
             try
             {
-                if (this.Request.Form.Files.Count != 0)
+                if (this.Request.Form.Files.Count == 0)
                 {
-                    var file = this.Request.Form.Files[0];
-                    var validationErrors = this.validator.Validate(file);
-
-                    if (validationErrors.Any())
-                    {
-                        return this.BadRequest(validationErrors);
-                    }
-
-                    string estateId = file.Name;
-
-                    var filename = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-
-                    var fileIdentifier = Guid.NewGuid().ToString();
-                    this.imageIoService.SaveOnDisk(file, filename, fileIdentifier);
-
-                    var link = this.imageIoService.CreateServerLink(this.Request, filename, fileIdentifier);
-                    var imageId = this.SaveInDb(file, estateId, link);
-
-                    return this.Ok(new ImageDto(imageId, estateId, string.Empty, link));
+                    return this.BadRequest();
                 }
 
-                return this.BadRequest();
+                var file = this.Request.Form.Files[0];
+                var validationErrors = this.validator.Validate(file);
+
+                if (validationErrors.Any())
+                {
+                    return this.BadRequest(validationErrors);
+                }
+
+                var estateId = file.Name;
+
+                var filename = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+
+                var fileIdentifier = Guid.NewGuid().ToString();
+                this.imageIoService.SaveOnDisk(file, filename, fileIdentifier);
+
+                var link = this.imageIoService.CreateServerLink(this.Request, filename, fileIdentifier);
+                var imageId = this.SaveInDb(file, estateId, link);
+
+                return this.Ok(new ImageDto(imageId, estateId, string.Empty, link));
             }
             catch (Exception ex)
             {

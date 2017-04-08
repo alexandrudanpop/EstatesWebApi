@@ -13,8 +13,8 @@
     {
         public MongoDbContext(IOptions<AppConfig> config)
         {
-            string connectionString = config.Value.ConnectionString;
-            MongoClient mongoClient = new MongoClient(connectionString);
+            var connectionString = config.Value.ConnectionString;
+            var mongoClient = new MongoClient(connectionString);
             var db = mongoClient.GetDatabase("estates");
 
             this.InitCollection(db);
