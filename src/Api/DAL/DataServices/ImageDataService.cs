@@ -6,6 +6,8 @@
 
     using Api.Model;
 
+    using Core.Contracts.DataService;
+
     using DTO.DTO;
 
     using MongoDB.Bson;

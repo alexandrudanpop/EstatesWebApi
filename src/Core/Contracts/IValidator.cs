@@ -1,4 +1,4 @@
-﻿namespace Api.Validators
+﻿namespace Core.Contracts
 {
     using System.Collections.Generic;
 

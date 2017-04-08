@@ -1,4 +1,4 @@
-﻿namespace Api.DAL.DataServices
+﻿namespace Core.Contracts.DataService
 {
     using System.Collections.Generic;
 

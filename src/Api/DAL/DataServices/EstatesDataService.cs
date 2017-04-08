@@ -5,6 +5,8 @@
 
     using Api.Model;
 
+    using Core.Contracts.DataService;
+
     using DTO.DTO;
 
     using MongoDB.Bson;
@@ -128,9 +130,9 @@
                                      };
 
             var filter = Builders<Estate>.Filter.Eq(e => e.Id, estate.Id);
-            var result = this.estatesDbCollection.Collection.ReplaceOne(filter, estateToUpdate);
+            var restult = this.estatesDbCollection.Collection.ReplaceOne(filter, estateToUpdate);
 
-            return true;
+            return restult.IsAcknowledged;
         }
 
         private List<Image> GetEstatesImages(IEnumerable<Estate> estates)

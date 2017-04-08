@@ -6,6 +6,8 @@
     using Api.DAL;
     using Api.Model;
 
+    using Core.Contracts;
+
     using DTO.DTO;
 
     using MongoDB.Driver;

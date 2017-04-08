@@ -8,10 +8,9 @@
 
     using MongoDB.Driver;
 
-    public class MongoDbContext<T> where T : class
+    public class MongoDbContext<T>
+        where T : class
     {
-        public IMongoCollection<T> Collection { get; private set;  }
-
         public MongoDbContext(IOptions<AppConfig> config)
         {
             string connectionString = config.Value.ConnectionString;
@@ -20,6 +19,8 @@
 
             this.InitCollection(db);
         }
+
+        public IMongoCollection<T> Collection { get; private set; }
 
         private void InitCollection(IMongoDatabase db)
         {

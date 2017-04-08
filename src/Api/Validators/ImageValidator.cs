@@ -7,6 +7,8 @@
     using Api.DAL;
     using Api.Model;
 
+    using Core.Contracts;
+
     using Microsoft.AspNetCore.Http;
 
     using MongoDB.Driver;
