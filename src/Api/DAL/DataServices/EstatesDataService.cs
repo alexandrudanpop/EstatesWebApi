@@ -1,11 +1,13 @@
 ﻿namespace Api.DAL.DataServices
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
     using Api.Model;
 
     using Core.Contracts.DataService;
+    using Core.Extensions;
 
     using DTO.DTO;
 
@@ -90,8 +92,43 @@
 
         public IReadOnlyList<EstateTempDto> GetFilteredBy(string name)
         {
-            var estates =
-                this.estatesDbCollection.Collection.Find(x => x.Title.Equals(name) || x.Title.Contains(name)).ToList();
+            var seachName = name.ToLower();
+
+            var caseInsensitiveFilter = Builders<Estate>.Filter.Regex(e => e.Title, seachName.ToCaseInsensitiveRegex());
+            var estates = this.estatesDbCollection.Collection.Find(caseInsensitiveFilter).ToList();
+
+            if (!estates.Any())
+            {
+                foreach (var word in name.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    if (string.IsNullOrEmpty(word))
+                    {
+                        continue;
+                    }
+
+                    var wordFilter = Builders<Estate>.Filter.Regex(e => e.Title, word.ToCaseInsensitiveRegex());
+                    estates = this.estatesDbCollection.Collection.Find(wordFilter).ToList();
+
+                    if (!estates.Any())
+                    {
+                        estates =
+                            this.estatesDbCollection.Collection.Find(e => e.Title.Contains(word)).ToList();
+                    }
+
+                    if (estates.Any())
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (!estates.Any())
+            {
+                estates =
+                    this.estatesDbCollection.Collection.Find(e => e.Title.Equals(name) || e.Title.Contains(name))
+                        .ToList();
+            }
+
             var images = this.GetEstatesImages(estates);
 
             estates.ForEach(e => e.Images.AddRange(images.Where(i => i.EstateId == e.Id)));
