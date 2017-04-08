@@ -1,9 +1,12 @@
-﻿namespace Api.Model
+﻿namespace Api.DAL
 {
-    using AppBoot;
-    using Microsoft.Extensions.Options;
-    using MongoDB.Driver;
     using System;
+
+    using Api.AppBoot;
+
+    using Microsoft.Extensions.Options;
+
+    using MongoDB.Driver;
 
     public class MongoDbContext<T> where T : class
     {
@@ -15,13 +18,13 @@
             MongoClient mongoClient = new MongoClient(connectionString);
             var db = mongoClient.GetDatabase("estates");
 
-            InitCollection(db);
+            this.InitCollection(db);
         }
 
         private void InitCollection(IMongoDatabase db)
         {
             var collectionName = Activator.CreateInstance(typeof(T)).ToString().ToLower();
-            Collection = db.GetCollection<T>(collectionName);
+            this.Collection = db.GetCollection<T>(collectionName);
         }
     }
 }

@@ -1,27 +1,51 @@
-﻿using System;
-using System.Linq;
-using DTO.DTO;
-using Microsoft.AspNetCore.Mvc;
-using Api.DAL.DataServices;
-using Api.Validators;
-using Api.IO;
-
-namespace Api.Controllers
+﻿namespace Api.Controllers
 {
+    using System;
+    using System.Linq;
+
+    using Api.DAL.DataServices;
+    using Api.IO;
+    using Api.Validators;
+
+    using DTO.DTO;
+
+    using Microsoft.AspNetCore.Mvc;
+
     // todo implement authorization
     public class EstatesController : Controller
     {
-        private readonly IDataService<EstateTempDto> _dataService;
+        private readonly IDataService<EstateTempDto> dataService;
 
-        private readonly IValidator<EstateTempDto> _validator;
+        private readonly ImageIoService imageIoService;
 
-        private readonly ImageIoService _imageIoService;
+        private readonly IValidator<EstateTempDto> validator;
 
-        public EstatesController(IDataService<EstateTempDto> dataService, IValidator<EstateTempDto> validator, ImageIoService imageIoService)
+        public EstatesController(
+            IDataService<EstateTempDto> dataService,
+            IValidator<EstateTempDto> validator,
+            ImageIoService imageIoService)
         {
-            _dataService = dataService;
-            _validator = validator;
-            _imageIoService = imageIoService;
+            this.dataService = dataService;
+            this.validator = validator;
+            this.imageIoService = imageIoService;
+        }
+
+        [Route("api/estates/{id}")]
+        [HttpDelete]
+        public IActionResult Delete(string id)
+        {
+            try
+            {
+                var images = this.dataService.GetById(id).Images;
+                this.imageIoService.DeleteFromDisk(images);
+
+                this.dataService.Delete(id);
+                return this.Ok();
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(500, ex.Message);
+            }
         }
 
         [Route("api/estates")]
@@ -30,18 +54,18 @@ namespace Api.Controllers
         {
             try
             {
-                var data = _dataService.GetAll();
+                var data = this.dataService.GetAll();
 
                 if (data.Any())
                 {
-                    return Ok(data);
+                    return this.Ok(data);
                 }
 
-                return NotFound();
+                return this.NotFound();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return this.StatusCode(500, ex.Message);
             }
         }
 
@@ -51,87 +75,66 @@ namespace Api.Controllers
         {
             if (string.IsNullOrEmpty(name))
             {
-                return BadRequest("Name filter can not be empty");
+                return this.BadRequest("Name filter can not be empty");
             }
 
             try
             {
-                var data = _dataService.GetFilteredBy(name);
+                var data = this.dataService.GetFilteredBy(name);
 
                 if (data.Any())
                 {
-                    return Ok(data);
+                    return this.Ok(data);
                 }
 
-                return NotFound();
+                return this.NotFound();
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return this.StatusCode(500, ex.Message);
             }
         }
 
         [Route("api/estates")]
         [HttpPost]
-        public IActionResult Post([FromBody]EstateTempDto estate)
+        public IActionResult Post([FromBody] EstateTempDto estate)
         {
             try
             {
-                var validationErrors = _validator.Validate(estate);
+                var validationErrors = this.validator.Validate(estate);
 
                 if (validationErrors.Any())
                 {
-                    return BadRequest(validationErrors);
+                    return this.BadRequest(validationErrors);
                 }
 
-                var newId = _dataService.Create(estate);
-                return Ok(newId);
+                var newId = this.dataService.Create(estate);
+                return this.Ok(newId);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return this.StatusCode(500, ex.Message);
             }
         }
 
         [Route("api/estates")]
         [HttpPut]
-        public IActionResult Put([FromBody]EstateTempDto estate)
+        public IActionResult Put([FromBody] EstateTempDto estate)
         {
             try
             {
-                var validationErrors = _validator.Validate(estate);
+                var validationErrors = this.validator.Validate(estate);
 
                 if (validationErrors.Any())
                 {
-                    return BadRequest(validationErrors);
+                    return this.BadRequest(validationErrors);
                 }
 
-                return _dataService.Update(estate)
-                    ? Ok()
-                    : (IActionResult)NotFound();
-                
+                return this.dataService.Update(estate) ? this.Ok() : (IActionResult)this.NotFound();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
-        [Route("api/estates/{id}")]
-        [HttpDelete]
-        public IActionResult Delete(string id)
-        {
-            try
-            {
-                var images = _dataService.GetById(id).Images;
-                _imageIoService.DeleteFromDisk(images);
-
-                _dataService.Delete(id);
-                return Ok();
-            }
-            catch(Exception ex)
-            {
-                return StatusCode(500, ex.Message);
+                return this.StatusCode(500, ex.Message);
             }
         }
     }

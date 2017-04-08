@@ -1,16 +1,20 @@
-﻿using Api.Model;
-using DTO.DTO;
-using MongoDB.Driver;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Api.Validators
+﻿namespace Api.Validators
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Api.DAL;
+    using Api.Model;
+
+    using DTO.DTO;
+
+    using MongoDB.Driver;
+
     public class EstateValidator : IValidator<EstateTempDto>
     {
-        const string NameUniqueValidation = "name must be unique";
+        private const string NameUniqueValidation = "name must be unique";
 
-        const string PriceLargerThanZeroValidation = "price must be larger than 0";
+        private const string PriceLargerThanZeroValidation = "price must be larger than 0";
 
         private readonly MongoDbContext<Estate> db;
 
@@ -23,11 +27,12 @@ namespace Api.Validators
         {
             var validations = new List<string>();
 
-            if (dto.Id == string.Empty && db.Collection.AsQueryable().Any(e => e.Title.Equals(dto.Name)))
+            if (dto.Id == string.Empty && this.db.Collection.AsQueryable().Any(e => e.Title.Equals(dto.Name)))
             {
                 validations.Add(NameUniqueValidation);
             }
-            else if (dto.Id != string.Empty && db.Collection.AsQueryable().Any(e => e.Id != dto.Id && e.Title.Equals(dto.Name)))
+            else if (dto.Id != string.Empty
+                     && this.db.Collection.AsQueryable().Any(e => e.Id != dto.Id && e.Title.Equals(dto.Name)))
             {
                 validations.Add(NameUniqueValidation);
             }

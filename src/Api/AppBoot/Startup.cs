@@ -1,5 +1,8 @@
 ﻿namespace Api.AppBoot
 {
+    using System;
+    using System.IO;
+
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -10,9 +13,6 @@
     using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Logging;
     using Microsoft.Net.Http.Headers;
-    using Model;
-    using System;
-    using System.IO;
 
     public class Startup
     {
@@ -20,12 +20,12 @@
         {
             var builder =
                 new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
-                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+                    .AddJsonFile("appsettings.json", true, true)
+                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true);
 
             if (env.IsEnvironment("Development"))
             {
-                builder.AddApplicationInsightsSettings(developerMode: true);
+                builder.AddApplicationInsightsSettings(true);
             }
 
             builder.AddEnvironmentVariables();
@@ -59,8 +59,7 @@
 
             services.AddApplicationInsightsTelemetry(this.Configuration);
 
-            services.AddMvcCore()
-                .AddJsonFormatters();
+            services.AddMvcCore().AddJsonFormatters();
 
             services.AddMvc();
             services.AddSwaggerGen();
@@ -68,13 +67,11 @@
             services.AddCors(
                 o => o.AddPolicy("WebApp", builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); }));
 
-            services.Configure<MvcOptions>(options =>
-            {
-                options.Filters.Add(new CorsAuthorizationFilterFactory("WebApp"));
-            });
+            services.Configure<MvcOptions>(
+                options => { options.Filters.Add(new CorsAuthorizationFilterFactory("WebApp")); });
 
             services.AddOptions();
-            services.Configure<AppConfig>(Configuration);
+            services.Configure<AppConfig>(this.Configuration);
 
             ContainerBuilder.AddServices(services);
         }
@@ -83,27 +80,31 @@
         {
             app.UseStaticFiles();
 
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                FileProvider = new PhysicalFileProvider(
-                        Path.Combine(Directory.GetCurrentDirectory(), "img")),
-                RequestPath = new PathString("/img"),
-                OnPrepareResponse = (context) =>
-                {
-                    var headers = context.Context.Response.GetTypedHeaders();
-                    headers.CacheControl = new CacheControlHeaderValue()
+            app.UseStaticFiles(
+                new StaticFileOptions
                     {
-                        MaxAge = TimeSpan.FromDays(7),
-                    };
-                }
-            });
+                        FileProvider =
+                            new PhysicalFileProvider(
+                                Path.Combine(Directory.GetCurrentDirectory(), "img")),
+                        RequestPath = new PathString("/img"),
+                        OnPrepareResponse = context =>
+                            {
+                                var headers = context.Context.Response.GetTypedHeaders();
+                                headers.CacheControl = new CacheControlHeaderValue
+                                                           {
+                                                               MaxAge = TimeSpan.FromDays(7)
+                                                           };
+                            }
+                    });
 
-            app.UseDirectoryBrowser(new DirectoryBrowserOptions()
-            {
-                FileProvider = new PhysicalFileProvider(
-                   Path.Combine(Directory.GetCurrentDirectory(), "img")),
-                RequestPath = new PathString("/img")
-            });
+            app.UseDirectoryBrowser(
+                new DirectoryBrowserOptions
+                    {
+                        FileProvider =
+                            new PhysicalFileProvider(
+                                Path.Combine(Directory.GetCurrentDirectory(), "img")),
+                        RequestPath = new PathString("/img")
+                    });
         }
     }
 }

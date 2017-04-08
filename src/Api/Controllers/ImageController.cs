@@ -1,25 +1,30 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
-using System;
-using Microsoft.AspNetCore.Http;
-using System.Linq;
-
-using DTO.DTO;
-using Api.DAL.DataServices;
-using Api.Validators;
-using Api.IO;
-
-namespace Api.Controllers
+﻿namespace Api.Controllers
 {
+    using System;
+    using System.Linq;
+
+    using Api.DAL.DataServices;
+    using Api.IO;
+    using Api.Validators;
+
+    using DTO.DTO;
+
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Net.Http.Headers;
+
     public class ImageController : Controller
     {
         private readonly IDataService<ImageDto> dataService;
 
-        private readonly IValidator<IFormFile> validator;
-
         private readonly ImageIoService imageIoService;
 
-        public ImageController(IDataService<ImageDto> dataService, IValidator<IFormFile> validator, ImageIoService imageIoService)
+        private readonly IValidator<IFormFile> validator;
+
+        public ImageController(
+            IDataService<ImageDto> dataService,
+            IValidator<IFormFile> validator,
+            ImageIoService imageIoService)
         {
             this.dataService = dataService;
             this.validator = validator;
@@ -32,45 +37,40 @@ namespace Api.Controllers
         {
             try
             {
-                if (Request.Form.Files.Count != 0)
+                if (this.Request.Form.Files.Count != 0)
                 {
-                    var file = Request.Form.Files[0];
-                    var validationErrors = validator.Validate(file);
+                    var file = this.Request.Form.Files[0];
+                    var validationErrors = this.validator.Validate(file);
 
                     if (validationErrors.Any())
                     {
-                        return BadRequest(validationErrors);
+                        return this.BadRequest(validationErrors);
                     }
 
                     string estateId = file.Name;
 
-                    var filename = ContentDispositionHeaderValue
-                        .Parse(file.ContentDisposition)
-                        .FileName
-                        .Trim('"');
+                    var filename = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
 
                     var fileIdentifier = Guid.NewGuid().ToString();
-                    imageIoService.SaveOnDisk(file, filename, fileIdentifier);
+                    this.imageIoService.SaveOnDisk(file, filename, fileIdentifier);
 
-                    var link = imageIoService.CreateServerLink(Request, filename, fileIdentifier);
-                    var imageId = SaveInDb(file, estateId, link);
+                    var link = this.imageIoService.CreateServerLink(this.Request, filename, fileIdentifier);
+                    var imageId = this.SaveInDb(file, estateId, link);
 
-                    return Ok(new ImageDto(imageId, estateId, string.Empty, link));
+                    return this.Ok(new ImageDto(imageId, estateId, string.Empty, link));
                 }
-                else
-                {
-                    return BadRequest();
-                }
+
+                return this.BadRequest();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return this.StatusCode(500, ex.Message);
             }
         }
 
         private string SaveInDb(IFormFile file, string estateId, string link)
         {
-            var imageId =  dataService.Create(new ImageDto(string.Empty, estateId, file.FileName, link));
+            var imageId = this.dataService.Create(new ImageDto(string.Empty, estateId, file.FileName, link));
 
             if (string.IsNullOrEmpty(imageId))
             {

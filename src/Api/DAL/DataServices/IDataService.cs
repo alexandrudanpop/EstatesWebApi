@@ -1,19 +1,20 @@
-﻿using System.Collections.Generic;
-
-namespace Api.DAL.DataServices
+﻿namespace Api.DAL.DataServices
 {
-    public interface IDataService<T> where T: class
+    using System.Collections.Generic;
+
+    public interface IDataService<T>
+        where T : class
     {
-        T GetById(string id);
+        string Create(T dto);
+
+        void Delete(string id);
 
         IReadOnlyList<T> GetAll();
 
+        T GetById(string id);
+
         IReadOnlyList<T> GetFilteredBy(string name);
 
-        string Create(T dto);
-
         bool Update(T dto);
-
-        void Delete(string id);
     }
 }

@@ -1,34 +1,38 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
-using System.Linq;
-using Api.Model;
-using MongoDB.Driver;
-
-namespace Api.Validators
+﻿namespace Api.Validators
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+
+    using Api.DAL;
+    using Api.Model;
+
+    using Microsoft.AspNetCore.Http;
+
+    using MongoDB.Driver;
+
     public class ImageValidator : IValidator<IFormFile>
     {
-        const int MaxFileLengthInBytes = 500000; // 500 Kb 
-        const string ImageMaxSizeValidation = "Image must be lower than 500 Kb in size";
-        const string NotAnImageValidation = "Provided file is not an image";
-        const string ServerFullValidation = "Ups! Server is full of images.";
-        const string NoEstateIdValidation = "No estate Id provided";
+        private const string ImageMaxSizeValidation = "Image must be lower than 500 Kb in size";
 
-        private readonly List<string> possibleImageExtensions = new List<string>
-        {
-            ".jpg",
-            ".png",
-            ".bmp",
-            ".gif",
-            ".tif",
-            ".JPG",
-            ".PNG",
-            ".BMP",
-            ".GIF",
-            ".TIF"
-        };
+        private const int MaxFileLengthInBytes = 500000; // 500 Kb 
+
+        private const string NoEstateIdValidation = "No estate Id provided";
+
+        private const string NotAnImageValidation = "Provided file is not an image";
+
+        private const string ServerFullValidation = "Ups! Server is full of images.";
 
         private readonly MongoDbContext<Image> db;
+
+        private readonly List<string> possibleImageExtensions = new List<string>
+                                                                    {
+                                                                        ".jpg",
+                                                                        ".png",
+                                                                        ".bmp",
+                                                                        ".gif",
+                                                                        ".tif",
+                                                                    };
 
         public ImageValidator(MongoDbContext<Image> db)
         {
@@ -44,14 +48,14 @@ namespace Api.Validators
                 validations.Add(ImageMaxSizeValidation);
             }
 
-            var fileExtension = System.IO.Path.GetExtension(dto.FileName.Trim());
+            var fileExtension = Path.GetExtension(dto.FileName.Trim());
 
-            if (!possibleImageExtensions.Contains(fileExtension))
+            if (!this.possibleImageExtensions.Contains(fileExtension.ToLower()))
             {
                 validations.Add(NotAnImageValidation);
             }
 
-            if (db.Collection.AsQueryable().Count() > 100)
+            if (this.db.Collection.AsQueryable().Count() > 100)
             {
                 validations.Add(ServerFullValidation);
             }

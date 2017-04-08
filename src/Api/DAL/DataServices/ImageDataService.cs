@@ -1,13 +1,16 @@
-﻿using Api.Model;
-using DTO.DTO;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Api.DAL.DataServices
+﻿namespace Api.DAL.DataServices
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Api.Model;
+
+    using DTO.DTO;
+
+    using MongoDB.Bson;
+    using MongoDB.Driver;
+
     public class ImageDataService : IDataService<ImageDto>
     {
         private readonly MongoDbContext<Image> db;
@@ -19,11 +22,18 @@ namespace Api.DAL.DataServices
 
         public string Create(ImageDto dto)
         {
-            var image = new Image { Id = ObjectId.GenerateNewId().ToString(), EstateId = dto.EstateId, Name = dto.Name, Link = dto.Link };
-            db.Collection.InsertOne(image);
+            var image = new Image
+                            {
+                                Id = ObjectId.GenerateNewId().ToString(),
+                                EstateId = dto.EstateId,
+                                Name = dto.Name,
+                                Link = dto.Link
+                            };
+            this.db.Collection.InsertOne(image);
 
-            return db.Collection.AsQueryable()
-                             .FirstOrDefault(i => i.EstateId == dto.EstateId && i.Link == dto.Link)?.Id;
+            return
+                this.db.Collection.AsQueryable()
+                    .FirstOrDefault(i => i.EstateId == dto.EstateId && i.Link == dto.Link)?.Id;
         }
 
         public void Delete(string id)

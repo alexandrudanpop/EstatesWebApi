@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace DTO.DTO
+﻿namespace DTO.DTO
 {
+    using System.Collections.Generic;
+
     public class EstateTempDto
     {
         public EstateTempDto(string id, string name, int price, IList<ImageDto> images)
@@ -14,10 +14,10 @@ namespace DTO.DTO
 
         public string Id { get; }
 
+        public IList<ImageDto> Images { get; }
+
         public string Name { get; }
 
         public int Price { get; }
-
-        public IList<ImageDto> Images { get; }
     }
 }

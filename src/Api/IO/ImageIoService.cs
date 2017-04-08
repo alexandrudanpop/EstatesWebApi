@@ -23,8 +23,8 @@
             var fileExtension = Path.GetExtension(fileName);
 
             return this.hostingEnv.IsDevelopment()
-            ? request.Host.Host + $@":5000/img/control-f5.com-{fileIdentifier}{fileExtension}"
-            : request.Host.Host + $@"/img/control-f5.com-{fileIdentifier}{fileExtension}";
+                       ? request.Host.Host + $@":5000/img/control-f5.com-{fileIdentifier}{fileExtension}"
+                       : request.Host.Host + $@"/img/control-f5.com-{fileIdentifier}{fileExtension}";
         }
 
         public void DeleteFromDisk(IList<ImageDto> images)

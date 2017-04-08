@@ -4,18 +4,18 @@ namespace DTO.DTO
     {
         public ImageDto(string id, string estateId, string name, string link)
         {
-            Id = id;
-            EstateId = estateId;
-            Name = name;
-            Link = link;
+            this.Id = id;
+            this.EstateId = estateId;
+            this.Name = name;
+            this.Link = link;
         }
-
-        public string Id { get; }
 
         public string EstateId { get; }
 
-        public string Name { get; }
+        public string Id { get; }
 
         public string Link { get; }
-	}
+
+        public string Name { get; }
+    }
 }
