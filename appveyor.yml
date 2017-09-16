@@ -1,10 +1,10 @@
+# build Configuration, i.e. Debug, Release, etc.
 configuration: Release
 
-# restore Nuget packages before running MSBuild
+# scripts to run before build
 before_build:
- - nuget restore
- 
-# package Web Application project for Web Deploy
-build:
- verbosity: minimal
- publish_wap: true
+  - dotnet restore
+
+build_script:
+  - dotnet build .\EstateWebApi.sln
+  
