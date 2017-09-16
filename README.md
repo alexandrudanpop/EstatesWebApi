@@ -1,7 +1,10 @@
+# Status
+https://ci.appveyor.com/api/projects/status/blacq5907mnj5aub/branch/master?svg=true
+
 # Playing around with dotnet core
 You will need dotnet core version: 1.0.0-preview2-final  (this still supports the project.json format).
 
-#Commands
+# Commands
 Navigate to the WebApp folder 
 1) dotnet restore (restore nugets)
 2) dotnet watch run (hot reload while making changes to the projects)
