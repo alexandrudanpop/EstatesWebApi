@@ -1,5 +1,5 @@
 # Status
-https://ci.appveyor.com/api/projects/status/blacq5907mnj5aub/branch/master?svg=true
+[![Build status](https://ci.appveyor.com/api/projects/status/blacq5907mnj5aub/branch/master?svg=true)](https://ci.appveyor.com/project/alexandrudanpop/estateswebapi/branch/master)
 
 # Playing around with dotnet core
 You will need dotnet core version: 1.0.0-preview2-final  (this still supports the project.json format).
