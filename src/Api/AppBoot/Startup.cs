@@ -25,7 +25,8 @@
 
             if (env.IsEnvironment("Development"))
             {
-                builder.AddApplicationInsightsSettings(true);
+                // remove for now
+                // builder.AddApplicationInsightsSettings(true);
             }
 
             builder.AddEnvironmentVariables();
@@ -42,8 +43,9 @@
 
             AddStaticFilesSettings(app);
 
-            app.UseApplicationInsightsRequestTelemetry();
-            app.UseApplicationInsightsExceptionTelemetry();
+            // remove for now because nuget restore failed
+            //app.UseApplicationInsightsRequestTelemetry();
+            //app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseMvc();
 
@@ -57,7 +59,7 @@
         {
             services.AddDirectoryBrowser();
 
-            services.AddApplicationInsightsTelemetry(this.Configuration);
+            //services.AddApplicationInsightsTelemetry(this.Configuration);
 
             services.AddMvcCore().AddJsonFormatters();
 
@@ -73,7 +75,7 @@
             services.AddOptions();
             services.Configure<AppConfig>(this.Configuration);
 
-            ContainerBuilder.AddServices(services);
+            ServiceRegistrator.RegisterServices(services);
         }
 
         private static void AddStaticFilesSettings(IApplicationBuilder app)

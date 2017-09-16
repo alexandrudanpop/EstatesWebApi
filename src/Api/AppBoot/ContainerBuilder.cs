@@ -14,9 +14,9 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.DependencyInjection;
 
-    public static class ContainerBuilder
+    public static class ServiceRegistrator
     {
-        public static void AddServices(IServiceCollection services)
+        public static void RegisterServices(IServiceCollection services)
         {
             services.AddTransient<MongoDbContext<Estate>>();
             services.AddTransient<MongoDbContext<Image>>();
