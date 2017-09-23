@@ -13,6 +13,7 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Net.Http.Headers;
+    using System.Collections.Generic;
 
     public class ImageController : Controller
     {
@@ -67,6 +68,22 @@
             {
                 return this.StatusCode(500, ex.Message);
             }
+        }
+
+        [Route("api/images/{id}")]
+        [HttpDelete]
+        public IActionResult Delete(string id)
+        {
+            var image = this.dataService.GetById(id);
+            if (string.IsNullOrEmpty(image.Id))
+            {
+                return this.NotFound();
+            }
+
+            imageIoService.DeleteFromDisk(new List<ImageDto> { image });
+            this.dataService.Delete(id);
+
+            return this.Ok();
         }
 
         private string SaveInDb(IFormFile file, string estateId, string link)

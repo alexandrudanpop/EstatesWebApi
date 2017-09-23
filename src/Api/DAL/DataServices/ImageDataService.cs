@@ -40,7 +40,7 @@
 
         public void Delete(string id)
         {
-            throw new NotImplementedException();
+            this.db.Collection.DeleteOne(x => x.Id == id);
         }
 
         public IReadOnlyList<ImageDto> GetAll()
@@ -50,7 +50,11 @@
 
         public ImageDto GetById(string id)
         {
-            throw new NotImplementedException();
+            var image =  db.Collection.AsQueryable().FirstOrDefault(x => x.Id == id);
+
+            return image != null
+                ? new ImageDto(image.Id, image.EstateId, image.Name, image.Link)
+                : new ImageDto(string.Empty, string.Empty, string.Empty, string.Empty);
         }
 
         public IReadOnlyList<ImageDto> GetFilteredBy(string name)

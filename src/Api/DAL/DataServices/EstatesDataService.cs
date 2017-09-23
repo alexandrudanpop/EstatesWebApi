@@ -49,6 +49,7 @@
             var estateFilter = Builders<Estate>.Filter.Eq("_id", id);
             this.estatesDbCollection.Collection.DeleteOne(estateFilter);
 
+            // todo should move this in image data service
             var imageFilter = Builders<Image>.Filter.Eq("EstateId", id);
             this.imageDbCollection.Collection.DeleteMany(imageFilter);
         }
