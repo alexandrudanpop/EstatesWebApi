@@ -2,7 +2,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/blacq5907mnj5aub/branch/master?svg=true)](https://ci.appveyor.com/project/alexandrudanpop/estateswebapi/branch/master)
 
 # Playing around with dotnet core
-You will need dotnet core version: 2.0  (this still supports the project.json format).
+You will need dotnet core version: 2.0
 
 # Commands
 Navigate to the src/api folder 
