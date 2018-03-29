@@ -9,11 +9,8 @@ Navigate to the src/api folder
 1) dotnet restore (restore nugets)
 2) dotnet watch run (hot reload while making changes to the projects)
 
-# Live app
-http://www.control-f5.com/react/index.html
+# Read more
+http://www.control-f5.com/
 
 # Also check out the react web app that consumes this api:
 https://github.com/alexandrudanpop/EstatesWebApp
-
-# Trello
-https://trello.com/b/Ncm83wVa/estates-web-app-todos
